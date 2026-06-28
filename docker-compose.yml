@@ -1,0 +1,33 @@
+services:
+  mysql:
+    image: mysql:8.0
+    container_name: armstrong_mysql
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: armstrong_bot
+      MYSQL_USER: armstrong
+      MYSQL_PASSWORD: armstrong
+    ports:
+      - "3306:3306"
+    volumes:
+      - .docker-data/mysql:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  redis:
+    image: redis:7-alpine
+    container_name: armstrong_redis
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+    volumes:
+      - .docker-data/redis:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
