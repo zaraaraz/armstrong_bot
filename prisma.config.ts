@@ -10,5 +10,7 @@ export default defineConfig({
   },
   datasource: {
     url: process.env["DATABASE_URL"],
+    // root user needed for shadow database during migrations
+    shadowDatabaseUrl: process.env["DATABASE_SHADOW_URL"],
   },
 });

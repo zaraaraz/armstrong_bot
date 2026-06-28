@@ -1,13 +1,150 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Get a free hosted Postgres database in seconds: `npx create-db`
-
 generator client {
-  provider = "prisma-client"
-  output   = "../generated/prisma"
+  provider = "prisma-client-js"
 }
 
 datasource db {
   provider = "mysql"
+}
+
+// ─── Base: Guild & Users ───────────────────────────────────────────────────
+
+/// A Discord guild (server). Root of all guild-scoped data.
+model Guild {
+  id          String    @id @default(cuid())
+  discordId   String    @unique @map("discord_id") @db.VarChar(20)
+  name        String    @db.VarChar(100)
+  iconHash    String?   @map("icon_hash") @db.VarChar(64)
+  ownerId     String    @map("owner_id") @db.VarChar(20)
+  locale      String    @default("pt") @db.VarChar(10)
+  active      Boolean   @default(true)
+  createdAt   DateTime  @default(now()) @map("created_at")
+  updatedAt   DateTime  @updatedAt @map("updated_at")
+  deletedAt   DateTime? @map("deleted_at")
+
+  config  GuildConfig?
+  members GuildMember[]
+
+  @@index([active])
+  @@index([deletedAt])
+  @@map("guilds")
+}
+
+/// Per-guild configuration blob.
+model GuildConfig {
+  id        String    @id @default(cuid())
+  guildId   String    @unique @map("guild_id")
+  prefix    String    @default("!") @db.VarChar(10)
+  locale    String    @default("pt") @db.VarChar(10)
+  timezone  String    @default("Europe/Lisbon") @db.VarChar(64)
+  settings  Json      @default("{}")
+  createdAt DateTime  @default(now()) @map("created_at")
+  updatedAt DateTime  @updatedAt @map("updated_at")
+  deletedAt DateTime? @map("deleted_at")
+
+  guild Guild @relation(fields: [guildId], references: [id], onDelete: Cascade)
+
+  @@index([guildId])
+  @@index([deletedAt])
+  @@map("guild_configs")
+}
+
+/// A Discord user — global, not guild-scoped.
+model User {
+  id         String    @id @default(cuid())
+  discordId  String    @unique @map("discord_id") @db.VarChar(20)
+  username   String    @db.VarChar(32)
+  globalName String?   @map("global_name") @db.VarChar(32)
+  avatarHash String?   @map("avatar_hash") @db.VarChar(64)
+  bot        Boolean   @default(false)
+  locale     String?   @db.VarChar(10)
+  createdAt  DateTime  @default(now()) @map("created_at")
+  updatedAt  DateTime  @updatedAt @map("updated_at")
+  deletedAt  DateTime? @map("deleted_at")
+
+  memberships GuildMember[]
+
+  @@index([username])
+  @@index([deletedAt])
+  @@map("users")
+}
+
+/// Join entity: a User's membership in a Guild.
+model GuildMember {
+  id        String    @id @default(cuid())
+  guildId   String    @map("guild_id")
+  userId    String    @map("user_id")
+  nickname  String?   @db.VarChar(32)
+  roleIds   Json      @default("[]") @map("role_ids")
+  joinedAt  DateTime  @map("joined_at")
+  createdAt DateTime  @default(now()) @map("created_at")
+  updatedAt DateTime  @updatedAt @map("updated_at")
+  deletedAt DateTime? @map("deleted_at")
+
+  guild Guild @relation(fields: [guildId], references: [id], onDelete: Cascade)
+  user  User  @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([guildId, userId])
+  @@index([guildId])
+  @@index([userId])
+  @@index([deletedAt])
+  @@map("guild_members")
+}
+
+// ─── Core: Module Registry ────────────────────────────────────────────────
+
+/// Persisted record of each loaded module.
+model ModuleRegistration {
+  id          String    @id @default(cuid())
+  moduleId    String    @unique @map("module_id")
+  name        String    @db.VarChar(100)
+  version     String    @db.VarChar(20)
+  enabled     Boolean   @default(true)
+  guildScoped Boolean   @default(true) @map("guild_scoped")
+  permissions Json
+  emits       Json
+  consumes    Json
+  lastBootAt  DateTime? @map("last_boot_at")
+  createdAt   DateTime  @default(now()) @map("created_at")
+  updatedAt   DateTime  @updatedAt @map("updated_at")
+
+  lifecycle ModuleLifecycleEvent[]
+
+  @@index([enabled])
+  @@index([moduleId])
+  @@map("module_registrations")
+}
+
+/// Append-only lifecycle audit for each module.
+model ModuleLifecycleEvent {
+  id             String   @id @default(cuid())
+  registrationId String   @map("registration_id")
+  phase          String   @db.VarChar(50)
+  detail         String?  @db.Text
+  traceId        String   @map("trace_id") @db.VarChar(64)
+  occurredAt     DateTime @default(now()) @map("occurred_at")
+
+  registration ModuleRegistration @relation(fields: [registrationId], references: [id], onDelete: Cascade)
+
+  @@index([registrationId])
+  @@index([phase])
+  @@index([occurredAt])
+  @@map("module_lifecycle_events")
+}
+
+// ─── Cache: Settings ──────────────────────────────────────────────────────
+
+/// Optional per-guild (or global) cache overrides.
+model CacheSetting {
+  id            String    @id @default(cuid())
+  guildId       String?   @map("guild_id")
+  ttlMultiplier Float     @default(1) @map("ttl_multiplier")
+  disabled      Boolean   @default(false)
+  createdAt     DateTime  @default(now()) @map("created_at")
+  updatedAt     DateTime  @updatedAt @map("updated_at")
+  deletedAt     DateTime? @map("deleted_at")
+
+  @@unique([guildId])
+  @@index([guildId])
+  @@index([deletedAt])
+  @@map("cache_settings")
 }

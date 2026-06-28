@@ -9,7 +9,7 @@ services:
       MYSQL_USER: armstrong
       MYSQL_PASSWORD: armstrong
     ports:
-      - "3306:3306"
+      - "3307:3306"
     volumes:
       - .docker-data/mysql:/var/lib/mysql
     healthcheck:
