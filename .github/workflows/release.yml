@@ -27,6 +27,8 @@ jobs:
 
       - run: npm ci
 
+      - run: npx prisma generate
+
       - name: Release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

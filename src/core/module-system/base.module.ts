@@ -3,7 +3,10 @@ import type { LifecycleContext } from '../kernel/lifecycle.types';
 
 export interface HealthContributor {
   readonly name: string;
-  check(): Promise<{ state: 'up' | 'down' | 'degraded'; detail?: Record<string, string | number | boolean> }>;
+  check(): Promise<{
+    state: 'up' | 'down' | 'degraded';
+    detail?: Record<string, string | number | boolean>;
+  }>;
 }
 
 export abstract class BaseModule {
