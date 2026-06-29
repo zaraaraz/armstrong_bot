@@ -124,7 +124,7 @@ export class TranslationsController {
       updatedBy: null,
     });
 
-    await this.eventBus.emit(
+    await this.eventBus.publish(
       I18N_EVENTS.TranslationUpdated,
       {
         guildId: dto.guildId,
@@ -134,7 +134,7 @@ export class TranslationsController {
         key: dto.key,
         updatedBy: 'api',
       },
-      { guildId: dto.guildId, source: 'api' },
+      { guildId: dto.guildId, actor: { type: 'api', id: 'api' } },
     );
 
     return toResponseDto(record);
@@ -150,7 +150,7 @@ export class TranslationsController {
     if (!row) throw new NotFoundException(`Translation ${id} not found`);
     await this.repo.softDelete(id, 'api');
 
-    await this.eventBus.emit(
+    await this.eventBus.publish(
       I18N_EVENTS.TranslationDeleted,
       {
         id,
@@ -159,7 +159,10 @@ export class TranslationsController {
         namespace: row['namespace'] as string,
         deletedBy: 'api',
       },
-      { guildId: row['guildId'] as string | null, source: 'api' },
+      {
+        guildId: row['guildId'] as string | null,
+        actor: { type: 'api', id: 'api' },
+      },
     );
   }
 }

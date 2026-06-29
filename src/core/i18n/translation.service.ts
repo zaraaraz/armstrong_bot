@@ -23,10 +23,6 @@ import { MissingKeyReporter } from './missing/missing-key.reporter';
 import type { TranslationRepository } from './repository/translation.repository';
 import { TRANSLATION_REPOSITORY } from './tokens';
 import { I18N_EVENTS } from './events/i18n.events';
-import type {
-  TranslationUpdatedPayload,
-  TranslationDeletedPayload,
-} from './events/i18n.events';
 
 type Bundle = Record<string, string>;
 
@@ -68,23 +64,35 @@ export class TranslationServiceImpl
       ),
     });
 
-    this.eventBus.on<TranslationUpdatedPayload>(
+    this.eventBus.subscribe(
       I18N_EVENTS.TranslationUpdated,
-      ({ payload }) => {
-        void this.invalidate(payload.namespace, payload.locale);
+      (envelope) => {
+        void this.invalidate(
+          envelope.payload.namespace,
+          envelope.payload.locale,
+        );
       },
+      { handlerId: 'i18n:onTranslationUpdated' },
     );
 
-    this.eventBus.on<TranslationDeletedPayload>(
+    this.eventBus.subscribe(
       I18N_EVENTS.TranslationDeleted,
-      ({ payload }) => {
-        void this.invalidate(payload.namespace, payload.locale);
+      (envelope) => {
+        void this.invalidate(
+          envelope.payload.namespace,
+          envelope.payload.locale,
+        );
       },
+      { handlerId: 'i18n:onTranslationDeleted' },
     );
 
-    this.eventBus.on<{ guildId: string }>('guild.deleted', ({ payload }) => {
-      void this.repo.softDeleteByGuild(payload.guildId);
-    });
+    this.eventBus.subscribe(
+      'guild.deleted',
+      (envelope) => {
+        void this.repo.softDeleteByGuild(envelope.payload.guildId);
+      },
+      { handlerId: 'i18n:onGuildDeleted' },
+    );
   }
 
   async t(

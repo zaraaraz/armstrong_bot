@@ -48,33 +48,41 @@ export class PermissionService implements OnModuleInit {
       .map((s) => s.trim())
       .filter(Boolean);
 
-    this.eventBus.on<{ guildId: string }>(
+    this.eventBus.subscribe(
       PermissionEvents.ClaimGrantChanged,
-      ({ payload }) => {
-        void this.cacheFacade.invalidate(payload.guildId);
+      (envelope) => {
+        void this.cacheFacade.invalidate(envelope.payload.guildId);
       },
+      { handlerId: 'permissions:onClaimGrantChanged' },
     );
-    this.eventBus.on<{ guildId: string }>(
+    this.eventBus.subscribe(
       PermissionEvents.GroupUpserted,
-      ({ payload }) => {
-        void this.cacheFacade.invalidate(payload.guildId);
+      (envelope) => {
+        void this.cacheFacade.invalidate(envelope.payload.guildId);
       },
+      { handlerId: 'permissions:onGroupUpserted' },
     );
-    this.eventBus.on<{ guildId: string }>(
+    this.eventBus.subscribe(
       PermissionEvents.GroupAssigned,
-      ({ payload }) => {
-        void this.cacheFacade.invalidate(payload.guildId);
+      (envelope) => {
+        void this.cacheFacade.invalidate(envelope.payload.guildId);
       },
+      { handlerId: 'permissions:onGroupAssigned' },
     );
-    this.eventBus.on<{ guildId: string }>(
+    this.eventBus.subscribe(
       PermissionEvents.GroupUnassigned,
-      ({ payload }) => {
-        void this.cacheFacade.invalidate(payload.guildId);
+      (envelope) => {
+        void this.cacheFacade.invalidate(envelope.payload.guildId);
       },
+      { handlerId: 'permissions:onGroupUnassigned' },
     );
-    this.eventBus.on<{ guildId: string }>('guild.created', ({ payload }) => {
-      void this.groupRepo.createTierDefaults(payload.guildId);
-    });
+    this.eventBus.subscribe(
+      'guild.created',
+      (envelope) => {
+        void this.groupRepo.createTierDefaults(envelope.payload.guildId);
+      },
+      { handlerId: 'permissions:onGuildCreated' },
+    );
   }
 
   async can(actor: PermissionActor, claim: string): Promise<boolean> {
@@ -122,9 +130,9 @@ export class PermissionService implements OnModuleInit {
         at: new Date().toISOString(),
       };
       this.logger.warn({ msg: 'permission.denied', ...payload });
-      await this.eventBus.emit(PermissionEvents.DecisionDenied, payload, {
+      await this.eventBus.publish(PermissionEvents.DecisionDenied, payload, {
         guildId: actor.guildId,
-        source: 'permissions',
+        actor: { type: 'system', id: 'permissions' },
       });
       throw new PermissionDeniedError(claim);
     }
@@ -139,7 +147,7 @@ export class PermissionService implements OnModuleInit {
     if (!group)
       throw new Error(`Group "${groupKey}" not found in guild ${guildId}`);
     await this.roleMappingRepo.assign(guildId, discordRoleId, group.id);
-    await this.eventBus.emit(
+    await this.eventBus.publish(
       PermissionEvents.GroupAssigned,
       {
         guildId,
@@ -148,7 +156,7 @@ export class PermissionService implements OnModuleInit {
         actorUserId: 'system',
         at: new Date().toISOString(),
       },
-      { guildId, source: 'permissions' },
+      { guildId, actor: { type: 'system', id: 'permissions' } },
     );
   }
 
@@ -160,7 +168,7 @@ export class PermissionService implements OnModuleInit {
     const group = await this.groupRepo.findGroupByKey(guildId, groupKey);
     if (!group) return;
     await this.roleMappingRepo.unassign(guildId, discordRoleId, group.id);
-    await this.eventBus.emit(
+    await this.eventBus.publish(
       PermissionEvents.GroupUnassigned,
       {
         guildId,
@@ -169,7 +177,7 @@ export class PermissionService implements OnModuleInit {
         actorUserId: 'system',
         at: new Date().toISOString(),
       },
-      { guildId, source: 'permissions' },
+      { guildId, actor: { type: 'system', id: 'permissions' } },
     );
   }
 
@@ -182,7 +190,7 @@ export class PermissionService implements OnModuleInit {
     const group = await this.groupRepo.findGroupByKey(guildId, groupKey);
     if (!group) throw new Error(`Group "${groupKey}" not found`);
     await this.claimGrantRepo.upsert(guildId, group.id, claim, effect);
-    await this.eventBus.emit(
+    await this.eventBus.publish(
       PermissionEvents.ClaimGrantChanged,
       {
         guildId,
@@ -192,7 +200,7 @@ export class PermissionService implements OnModuleInit {
         actorUserId: 'system',
         at: new Date().toISOString(),
       },
-      { guildId, source: 'permissions' },
+      { guildId, actor: { type: 'system', id: 'permissions' } },
     );
   }
 
@@ -204,7 +212,7 @@ export class PermissionService implements OnModuleInit {
     const group = await this.groupRepo.findGroupByKey(guildId, groupKey);
     if (!group) return;
     await this.claimGrantRepo.removeGrant(group.id, claim);
-    await this.eventBus.emit(
+    await this.eventBus.publish(
       PermissionEvents.ClaimGrantChanged,
       {
         guildId,
@@ -214,7 +222,7 @@ export class PermissionService implements OnModuleInit {
         actorUserId: 'system',
         at: new Date().toISOString(),
       },
-      { guildId, source: 'permissions' },
+      { guildId, actor: { type: 'system', id: 'permissions' } },
     );
   }
 

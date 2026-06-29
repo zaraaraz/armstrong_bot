@@ -299,6 +299,61 @@ enum ClaimEffect {
   DENY
 }
 
+// ─── Events: Bus Persistence ─────────────────────────────────────────────
+
+/// Durable log of every async/both event published through the bus.
+model EventLog {
+  id            String    @id @default(uuid())
+  envelopeId    String    @unique @map("envelope_id")
+  eventName     String    @map("event_name") @db.VarChar(128)
+  guildId       String?   @map("guild_id") @db.VarChar(20)
+  actorType     String    @map("actor_type") @db.VarChar(20)
+  actorId       String    @map("actor_id") @db.VarChar(64)
+  payload       Json
+  correlationId String    @map("correlation_id") @db.VarChar(64)
+  causationId   String?   @map("causation_id") @db.VarChar(64)
+  version       Int       @default(1)
+  delivery      String    @db.VarChar(10)
+  status        String    @default("published") @db.VarChar(20)
+  occurredAt    DateTime  @map("occurred_at")
+  createdAt     DateTime  @default(now()) @map("created_at")
+  deletedAt     DateTime? @map("deleted_at")
+
+  deadLetters EventDeadLetter[]
+
+  @@index([eventName])
+  @@index([guildId])
+  @@index([correlationId])
+  @@index([status])
+  @@index([occurredAt])
+  @@map("event_logs")
+}
+
+/// Dead-letter queue: envelopes whose handlers exhausted all retry attempts.
+model EventDeadLetter {
+  id          String    @id @default(uuid())
+  envelopeId  String    @map("envelope_id") @db.VarChar(64)
+  eventName   String    @map("event_name") @db.VarChar(128)
+  guildId     String?   @map("guild_id") @db.VarChar(20)
+  handlerId   String    @map("handler_id") @db.VarChar(128)
+  payload     Json
+  attempts    Int
+  lastError   String    @map("last_error") @db.Text
+  errorCode   String    @map("error_code") @db.VarChar(64)
+  status      String    @default("pending") @db.VarChar(20)
+  createdAt   DateTime  @default(now()) @map("created_at")
+  replayedAt  DateTime? @map("replayed_at")
+  deletedAt   DateTime? @map("deleted_at")
+
+  eventLog EventLog? @relation(fields: [envelopeId], references: [envelopeId])
+
+  @@index([eventName])
+  @@index([handlerId])
+  @@index([status])
+  @@index([guildId])
+  @@map("event_dead_letters")
+}
+
 // ─── Cache: Settings ──────────────────────────────────────────────────────
 
 /// Optional per-guild (or global) cache overrides.

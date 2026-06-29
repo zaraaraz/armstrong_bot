@@ -37,9 +37,9 @@ export class MissingKeyReporter {
 
     this.logger.warn({ msg: 'i18n.missing', key, locale, chainTried, guildId });
 
-    void this.eventBus.emit(I18N_EVENTS.MissingKeyDetected, payload, {
+    void this.eventBus.publish(I18N_EVENTS.MissingKeyDetected, payload, {
       guildId,
-      source: 'i18n',
+      actor: { type: 'system', id: 'i18n' },
     });
   }
 }
