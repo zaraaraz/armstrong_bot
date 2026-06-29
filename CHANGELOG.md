@@ -1,3 +1,10 @@
+# [1.1.0](https://github.com/zaraaraz/armstrong_bot/compare/v1.0.0...v1.1.0) (2026-06-29)
+
+
+### Features
+
+* **database:** add deployment_records table with relevant fields and indexes ([2d2c86a](https://github.com/zaraaraz/armstrong_bot/commit/2d2c86adcbe012aa722c4ff1434ab0662b09738a))
+
 # 1.0.0 (2026-06-29)
 
 
