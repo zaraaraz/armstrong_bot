@@ -1,3 +1,10 @@
+## [1.1.1](https://github.com/zaraaraz/armstrong_bot/compare/v1.1.0...v1.1.1) (2026-06-29)
+
+
+### Bug Fixes
+
+* **ci:** update commitlint action to version 7 ([a05a4f7](https://github.com/zaraaraz/armstrong_bot/commit/a05a4f7434b8b774a1752d382d3e1400977a2705))
+
 # [1.1.0](https://github.com/zaraaraz/armstrong_bot/compare/v1.0.0...v1.1.0) (2026-06-29)
 
 
