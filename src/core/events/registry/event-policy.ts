@@ -60,6 +60,31 @@ const POLICY_TABLE: Partial<Record<EventName, EventPolicy>> = {
     idempotent: false,
     fireAndForget: true,
   },
+  'security.rate_limit.exceeded': {
+    delivery: 'async',
+    idempotent: false,
+    fireAndForget: true,
+  },
+  'security.auth.failed': {
+    delivery: 'async',
+    idempotent: false,
+    fireAndForget: true,
+  },
+  'security.permission.denied': {
+    delivery: 'async',
+    idempotent: false,
+    fireAndForget: true,
+  },
+  'security.secret.accessed': {
+    delivery: 'async',
+    idempotent: false,
+    fireAndForget: true,
+  },
+  'security.encryption.key_rotated': {
+    delivery: 'both',
+    idempotent: false,
+    fireAndForget: true,
+  },
 };
 
 export function getEventPolicy(name: EventName): EventPolicy {

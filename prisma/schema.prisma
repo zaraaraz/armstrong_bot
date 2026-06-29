@@ -354,6 +354,43 @@ model EventDeadLetter {
   @@map("event_dead_letters")
 }
 
+// ─── Security: API Keys & Encryption ──────────────────────────────────────
+
+/// A scoped API key. Only the Argon2id/scrypt hash is stored — never the raw key.
+model ApiKey {
+  id         String    @id @default(cuid())
+  guildId    String?   @map("guild_id") @db.VarChar(20)
+  name       String    @db.VarChar(64)
+  hashedKey  String    @unique @map("hashed_key") @db.VarChar(255)
+  prefix     String    @db.VarChar(16)
+  scopes     String    @db.Text
+  lastUsedAt DateTime? @map("last_used_at")
+  expiresAt  DateTime? @map("expires_at")
+  revokedAt  DateTime? @map("revoked_at")
+  createdAt  DateTime  @default(now()) @map("created_at")
+
+  @@index([guildId])
+  @@index([prefix])
+  @@map("api_keys")
+}
+
+/// Tracks master encryption keys for rotation (ACTIVE | RETIRING | RETIRED).
+model EncryptionKey {
+  id        String   @id @default(cuid())
+  keyId     String   @unique @map("key_id") @db.VarChar(64)
+  state     KeyState @default(ACTIVE)
+  createdAt DateTime @default(now()) @map("created_at")
+
+  @@index([state])
+  @@map("encryption_keys")
+}
+
+enum KeyState {
+  ACTIVE
+  RETIRING
+  RETIRED
+}
+
 // ─── Cache: Settings ──────────────────────────────────────────────────────
 
 /// Optional per-guild (or global) cache overrides.
