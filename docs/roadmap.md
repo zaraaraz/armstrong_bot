@@ -6,6 +6,7 @@
 ---
 
 ## Phase 1 — Infrastructure
+## feature/core
 
 | Order | Branch | Spec |
 |---|---|---|
@@ -15,6 +16,7 @@
 | 4 | `feature/ci-cd` | [architecture/12-ci-cd.md](architecture/12-ci-cd.md) |
 
 ## Phase 2 — Core Platform
+## feature/base
 
 | Order | Branch | Spec |
 |---|---|---|
