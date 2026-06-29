@@ -1,4 +1,5 @@
 import { Global, Module } from '@nestjs/common';
+import { DiscoveryModule, MetadataScanner } from '@nestjs/core';
 import { EventBus } from './event-bus';
 import { EventBusService } from './event-bus.service';
 import { SyncDispatcher } from './dispatchers/sync.dispatcher';
@@ -11,9 +12,11 @@ import { PrismaDeadLetterRepository } from './repositories/dead-letter.prisma.re
 import { DiscordBridgeService } from './discord/discord-bridge.service';
 import { EventReplayService } from './replay/event-replay.service';
 import { EventsController } from './api/events.controller';
+import { OnEventScanner } from './handlers/on-event.scanner';
 
 @Global()
 @Module({
+  imports: [DiscoveryModule],
   controllers: [EventsController],
   providers: [
     { provide: EventBus, useClass: EventBusService },
@@ -24,6 +27,8 @@ import { EventsController } from './api/events.controller';
     { provide: DeadLetterRepository, useClass: PrismaDeadLetterRepository },
     DiscordBridgeService,
     EventReplayService,
+    MetadataScanner,
+    OnEventScanner,
   ],
   exports: [EventBus, DiscordBridgeService, EventReplayService],
 })
