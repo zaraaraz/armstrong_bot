@@ -131,6 +131,41 @@ model ModuleLifecycleEvent {
   @@map("module_lifecycle_events")
 }
 
+// ─── CI/CD: Deployment Records ────────────────────────────────────────────
+
+/// Immutable audit record written by the deploy pipeline on each deploy.
+model DeploymentRecord {
+  id          String           @id @default(cuid())
+  environment DeploymentEnv
+  version     String           @db.VarChar(50)
+  gitSha      String           @map("git_sha") @db.VarChar(40)
+  imageTag    String           @map("image_tag") @db.VarChar(255)
+  status      DeploymentStatus
+  durationMs  Int              @map("duration_ms")
+  rolledBack  Boolean          @default(false) @map("rolled_back")
+  traceId     String           @map("trace_id") @db.VarChar(64)
+  startedAt   DateTime         @map("started_at")
+  finishedAt  DateTime?        @map("finished_at")
+  createdAt   DateTime         @default(now()) @map("created_at")
+
+  @@index([environment, createdAt])
+  @@index([version])
+  @@index([gitSha])
+  @@map("deployment_records")
+}
+
+enum DeploymentEnv {
+  STAGING
+  PRODUCTION
+}
+
+enum DeploymentStatus {
+  STARTED
+  SUCCEEDED
+  FAILED
+  ROLLED_BACK
+}
+
 // ─── Cache: Settings ──────────────────────────────────────────────────────
 
 /// Optional per-guild (or global) cache overrides.

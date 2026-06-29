@@ -1,0 +1,14 @@
+.git
+.github
+.husky
+.docker-data
+node_modules
+dist
+coverage
+docs
+test
+scripts
+*.md
+*.log
+.env*
+docker-compose*.yml
