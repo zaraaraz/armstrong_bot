@@ -1,0 +1,7 @@
+{
+  "ui.greeting": "Olá, {name}!",
+  "ui.test": "Sistema de traduções activo.",
+  "errors.notFound": "Recurso não encontrado.",
+  "errors.forbidden": "Não tens permissão para realizar esta acção.",
+  "errors.generic": "Ocorreu um erro inesperado."
+}

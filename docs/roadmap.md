@@ -6,7 +6,7 @@
 ---
 
 ## Phase 1 — Infrastructure
-## feature/core
+## Branch: feature/core
 
 | Order | Branch | Spec |
 |---|---|---|
@@ -16,7 +16,7 @@
 | 4 | `feature/ci-cd` | [architecture/12-ci-cd.md](architecture/12-ci-cd.md) |
 
 ## Phase 2 — Core Platform
-## feature/base
+## Branch: feature/core-platform
 
 | Order | Branch | Spec |
 |---|---|---|
@@ -28,6 +28,7 @@
 | 10 | `feature/testing` | [architecture/11-testing.md](architecture/11-testing.md) |
 
 ## Phase 3 — API & Dashboard
+## Branch: feature/api-dashboard
 
 | Order | Branch | Spec |
 |---|---|---|
@@ -35,6 +36,7 @@
 | 12 | `feature/dashboard` | [architecture/09-dashboard.md](architecture/09-dashboard.md) |
 
 ## Phase 4 — Foundational Modules
+## Branch: feature/core-modules
 
 | Order | Branch | Spec |
 |---|---|---|
@@ -46,6 +48,7 @@
 | 18 | `feature/webhooks` | [modules/webhooks.md](modules/webhooks.md) |
 
 ## Phase 5 — Feature Modules
+## Branch: feature/modules
 
 | Order | Branch | Spec |
 |---|---|---|

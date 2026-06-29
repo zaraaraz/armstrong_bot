@@ -1,0 +1,7 @@
+{
+  "ui.greeting": "Hello, {name}!",
+  "ui.test": "Translation system active.",
+  "errors.notFound": "Resource not found.",
+  "errors.forbidden": "You do not have permission to perform this action.",
+  "errors.generic": "An unexpected error occurred."
+}

@@ -21,8 +21,9 @@ model Guild {
   updatedAt   DateTime  @updatedAt @map("updated_at")
   deletedAt   DateTime? @map("deleted_at")
 
-  config  GuildConfig?
-  members GuildMember[]
+  config       GuildConfig?
+  members      GuildMember[]
+  translations Translation[]
 
   @@index([active])
   @@index([deletedAt])
@@ -164,6 +165,138 @@ enum DeploymentStatus {
   SUCCEEDED
   FAILED
   ROLLED_BACK
+}
+
+// ─── i18n: Translations ───────────────────────────────────────────────────
+
+/// A per-guild (or global) translation override authored via the dashboard.
+/// File-default translations are NOT stored here — only overrides.
+model Translation {
+  id        String    @id @default(cuid())
+  guildId   String?   @map("guild_id")
+  locale    String    @db.VarChar(10)
+  module    String    @db.VarChar(64)
+  namespace String    @db.VarChar(64)
+  key       String    @db.VarChar(255)
+  value     String    @db.Text
+  updatedBy String?   @map("updated_by") @db.VarChar(20)
+  createdAt DateTime  @default(now()) @map("created_at")
+  updatedAt DateTime  @updatedAt @map("updated_at")
+  deletedAt DateTime? @map("deleted_at")
+
+  guild Guild? @relation(fields: [guildId], references: [id], onDelete: Cascade)
+
+  @@unique([guildId, locale, module, namespace, key], name: "uq_translation_scope")
+  @@index([locale, module, namespace])
+  @@index([guildId, locale])
+  @@index([deletedAt])
+  @@map("translations")
+}
+
+/// Supported locales (file defaults ∪ DB-authored).
+model Locale {
+  id          String    @id @default(cuid())
+  code        String    @unique @db.VarChar(10)
+  displayName String    @map("display_name") @db.VarChar(64)
+  enabled     Boolean   @default(true)
+  isDefault   Boolean   @default(false) @map("is_default")
+  createdAt   DateTime  @default(now()) @map("created_at")
+  deletedAt   DateTime? @map("deleted_at")
+
+  @@index([enabled])
+  @@map("locales")
+}
+
+/// Per-user (optionally per-guild) locale preference.
+model UserLocalePreference {
+  id        String   @id @default(cuid())
+  userId    String   @map("user_id") @db.VarChar(20)
+  guildId   String?  @map("guild_id") @db.VarChar(20)
+  locale    String   @db.VarChar(10)
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@unique([userId, guildId], name: "uq_user_guild_locale")
+  @@index([userId])
+  @@map("user_locale_preferences")
+}
+
+// ─── Permissions ──────────────────────────────────────────────────────────
+
+/// A named group of claims, scoped to a guild.
+model PermissionGroup {
+  id        String    @id @default(cuid())
+  guildId   String    @map("guild_id")
+  key       String    @db.VarChar(64)
+  name      String    @db.VarChar(64)
+  priority  Int       @default(100)
+  isSystem  Boolean   @default(false) @map("is_system")
+  createdAt DateTime  @default(now()) @map("created_at")
+  updatedAt DateTime  @updatedAt @map("updated_at")
+  deletedAt DateTime? @map("deleted_at")
+
+  grants   ClaimGrant[]
+  roleMaps RoleGroupMapping[]
+  parents  GroupInheritance[] @relation("childGroup")
+  children GroupInheritance[] @relation("parentGroup")
+
+  @@unique([guildId, key])
+  @@index([guildId])
+  @@index([guildId, deletedAt])
+  @@map("permission_groups")
+}
+
+/// A GRANT or DENY of a claim string on a permission group.
+model ClaimGrant {
+  id        String      @id @default(cuid())
+  guildId   String      @map("guild_id")
+  groupId   String      @map("group_id")
+  claim     String      @db.VarChar(255)
+  effect    ClaimEffect @default(GRANT)
+  createdAt DateTime    @default(now()) @map("created_at")
+  updatedAt DateTime    @updatedAt @map("updated_at")
+
+  group PermissionGroup @relation(fields: [groupId], references: [id], onDelete: Cascade)
+
+  @@unique([groupId, claim])
+  @@index([guildId])
+  @@index([guildId, claim])
+  @@map("claim_grants")
+}
+
+/// Maps a Discord role to one or more permission groups.
+model RoleGroupMapping {
+  id            String   @id @default(cuid())
+  guildId       String   @map("guild_id")
+  discordRoleId String   @map("discord_role_id") @db.VarChar(20)
+  groupId       String   @map("group_id")
+  createdAt     DateTime @default(now()) @map("created_at")
+
+  group PermissionGroup @relation(fields: [groupId], references: [id], onDelete: Cascade)
+
+  @@unique([guildId, discordRoleId, groupId])
+  @@index([guildId])
+  @@index([guildId, discordRoleId])
+  @@map("role_group_mappings")
+}
+
+/// Parent–child group inheritance.
+model GroupInheritance {
+  id            String @id @default(cuid())
+  guildId       String @map("guild_id")
+  childGroupId  String @map("child_group_id")
+  parentGroupId String @map("parent_group_id")
+
+  childGroup  PermissionGroup @relation("childGroup", fields: [childGroupId], references: [id], onDelete: Cascade)
+  parentGroup PermissionGroup @relation("parentGroup", fields: [parentGroupId], references: [id], onDelete: Cascade)
+
+  @@unique([childGroupId, parentGroupId])
+  @@index([guildId])
+  @@map("group_inheritances")
+}
+
+enum ClaimEffect {
+  GRANT
+  DENY
 }
 
 // ─── Cache: Settings ──────────────────────────────────────────────────────
