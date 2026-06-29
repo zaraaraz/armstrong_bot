@@ -45,7 +45,10 @@ export class RedisCacheStore implements ICacheStore {
       await this.redis.del(...keys);
       return keys.length;
     } catch (err) {
-      this.logger.error(`Redis deleteByPrefix error for prefix "${prefix}"`, err);
+      this.logger.error(
+        `Redis deleteByPrefix error for prefix "${prefix}"`,
+        err,
+      );
       return 0;
     }
   }

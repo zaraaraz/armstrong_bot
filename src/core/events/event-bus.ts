@@ -12,7 +12,9 @@ export interface DomainEvent<TPayload = unknown> {
   readonly meta: EventMeta;
 }
 
-export type EventHandler<TPayload> = (event: DomainEvent<TPayload>) => Promise<void> | void;
+export type EventHandler<TPayload> = (
+  event: DomainEvent<TPayload>,
+) => Promise<void> | void;
 
 export interface Unsubscribe {
   (): void;
@@ -25,7 +27,13 @@ export abstract class EventBus {
     options: { guildId: string | null; source: string },
   ): Promise<void>;
 
-  abstract on<TPayload>(name: string, handler: EventHandler<TPayload>): Unsubscribe;
+  abstract on<TPayload>(
+    name: string,
+    handler: EventHandler<TPayload>,
+  ): Unsubscribe;
 
-  abstract once<TPayload>(name: string, handler: EventHandler<TPayload>): Unsubscribe;
+  abstract once<TPayload>(
+    name: string,
+    handler: EventHandler<TPayload>,
+  ): Unsubscribe;
 }

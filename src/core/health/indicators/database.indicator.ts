@@ -1,5 +1,8 @@
 import { Injectable } from '@nestjs/common';
-import type { HealthContributor, HealthCheckResult } from '../health-contributor';
+import type {
+  HealthContributor,
+  HealthCheckResult,
+} from '../health-contributor';
 import type { PrismaService } from '../../../database/prisma.service';
 
 @Injectable()

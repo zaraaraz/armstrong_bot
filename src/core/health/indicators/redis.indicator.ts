@@ -1,6 +1,9 @@
 import { Injectable } from '@nestjs/common';
 import type { Redis } from 'ioredis';
-import type { HealthContributor, HealthCheckResult } from '../health-contributor';
+import type {
+  HealthContributor,
+  HealthCheckResult,
+} from '../health-contributor';
 
 @Injectable()
 export class RedisHealthIndicator implements HealthContributor {

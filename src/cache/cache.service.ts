@@ -1,6 +1,9 @@
 import { Injectable, Logger } from '@nestjs/common';
 import type { CacheEntry } from './interfaces/cache-entry.interface';
-import type { CacheGetOrSetOptions, CacheSetOptions } from './interfaces/cache-options.interface';
+import type {
+  CacheGetOrSetOptions,
+  CacheSetOptions,
+} from './interfaces/cache-options.interface';
 import type { MemoryCacheStore } from './stores/memory-cache.store';
 import type { RedisCacheStore } from './stores/redis-cache.store';
 import type { CacheKeyBuilder } from './keys/cache-key.builder';
@@ -28,31 +31,44 @@ export class CacheService {
     return null;
   }
 
-  async getOrSet<T>(key: string, loader: () => Promise<T>, options: CacheGetOrSetOptions<T>): Promise<T> {
+  async getOrSet<T>(
+    key: string,
+    loader: () => Promise<T>,
+    options: CacheGetOrSetOptions<T>,
+  ): Promise<T> {
     const cached = await this.get<T>(key);
     if (cached !== null) return cached;
 
     const existing = this.inflight.get(key);
     if (existing) return existing as Promise<T>;
 
-    const work = loader().then(async (value) => {
-      this.inflight.delete(key);
-      await this.set(key, value, options);
-      return value;
-    }).catch((err: unknown) => {
-      this.inflight.delete(key);
-      throw err;
-    });
+    const work = loader()
+      .then(async (value) => {
+        this.inflight.delete(key);
+        await this.set(key, value, options);
+        return value;
+      })
+      .catch((err: unknown) => {
+        this.inflight.delete(key);
+        throw err;
+      });
 
     this.inflight.set(key, work);
-    return work as Promise<T>;
+    return work;
   }
 
   async set<T>(key: string, value: T, options: CacheSetOptions): Promise<void> {
-    const jitter = options.jitterSeconds ? Math.floor(Math.random() * options.jitterSeconds * 1000) : 0;
+    const jitter = options.jitterSeconds
+      ? Math.floor(Math.random() * options.jitterSeconds * 1000)
+      : 0;
     const ttlMs = options.ttlSeconds * 1000 + jitter;
     const now = Date.now();
-    const entry: CacheEntry<T> = { value, storedAt: now, expiresAt: now + ttlMs, tags: options.tags ?? [] };
+    const entry: CacheEntry<T> = {
+      value,
+      storedAt: now,
+      expiresAt: now + ttlMs,
+      tags: options.tags ?? [],
+    };
 
     if (!options.l2Only) await this.l1.set(key, entry);
     await this.l2.set(key, entry);
@@ -70,9 +86,9 @@ export class CacheService {
     return Math.max(l1count, l2count);
   }
 
-  async invalidateTags(tags: readonly string[]): Promise<number> {
+  invalidateTags(tags: readonly string[]): Promise<number> {
     this.logger.debug(`Invalidating tags: ${tags.join(', ')}`);
-    return 0;
+    return Promise.resolve(0);
   }
 
   async has(key: string): Promise<boolean> {

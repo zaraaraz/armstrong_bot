@@ -19,7 +19,11 @@ export class ModuleRegistry {
       this.logger.warn(`Module "${id}" already registered — skipping`);
       return;
     }
-    this.modules.set(id, { instance: module, manifest: module.manifest, registeredAt: new Date() });
+    this.modules.set(id, {
+      instance: module,
+      manifest: module.manifest,
+      registeredAt: new Date(),
+    });
     this.logger.log(`Module registered: ${id} v${module.manifest.version}`);
   }
 
@@ -38,7 +42,10 @@ export class ModuleRegistry {
 
     const visit = (id: string): void => {
       if (visited.has(id)) return;
-      if (inStack.has(id)) throw new Error(`Circular dependency detected involving module "${id}"`);
+      if (inStack.has(id))
+        throw new Error(
+          `Circular dependency detected involving module "${id}"`,
+        );
 
       const reg = this.modules.get(id);
       if (!reg) throw new Error(`Unknown module dependency: "${id}"`);
@@ -55,6 +62,8 @@ export class ModuleRegistry {
   }
 
   allPermissionClaims(): readonly string[] {
-    return Array.from(this.modules.values()).flatMap((r) => [...r.manifest.permissions]);
+    return Array.from(this.modules.values()).flatMap((r) => [
+      ...r.manifest.permissions,
+    ]);
   }
 }

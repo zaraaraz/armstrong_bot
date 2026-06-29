@@ -11,7 +11,11 @@ async function bootstrap(): Promise<void> {
     .setVersion('0.1.0')
     .addBearerAuth()
     .build();
-  SwaggerModule.setup('api/docs', app, SwaggerModule.createDocument(app, swagger));
+  SwaggerModule.setup(
+    'api/docs',
+    app,
+    SwaggerModule.createDocument(app, swagger),
+  );
 
   const shutdown = app.get(ShutdownService);
   const timeoutMs = Number(process.env.SHUTDOWN_TIMEOUT_MS ?? 15_000);

@@ -1,6 +1,11 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { randomUUID } from 'crypto';
-import { EventBus, type DomainEvent, type EventHandler, type Unsubscribe } from './event-bus';
+import {
+  EventBus,
+  type DomainEvent,
+  type EventHandler,
+  type Unsubscribe,
+} from './event-bus';
 
 @Injectable()
 export class InProcessEventBus extends EventBus {
@@ -29,7 +34,7 @@ export class InProcessEventBus extends EventBus {
 
     for (const handler of set) {
       try {
-        await handler(event as DomainEvent<unknown>);
+        await handler(event);
       } catch (err) {
         this.logger.error(`Handler error for event "${name}"`, err);
       }
@@ -38,8 +43,8 @@ export class InProcessEventBus extends EventBus {
 
   on<TPayload>(name: string, handler: EventHandler<TPayload>): Unsubscribe {
     if (!this.handlers.has(name)) this.handlers.set(name, new Set());
-    this.handlers.get(name)!.add(handler as EventHandler<unknown>);
-    return () => this.handlers.get(name)?.delete(handler as EventHandler<unknown>);
+    this.handlers.get(name)!.add(handler);
+    return () => this.handlers.get(name)?.delete(handler);
   }
 
   once<TPayload>(name: string, handler: EventHandler<TPayload>): Unsubscribe {

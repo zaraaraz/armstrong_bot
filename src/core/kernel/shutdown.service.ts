@@ -10,8 +10,10 @@ export class ShutdownService implements OnApplicationShutdown {
     this.app = app;
   }
 
-  async onApplicationShutdown(signal?: string): Promise<void> {
-    this.logger.log(`Shutdown initiated${signal ? ` (signal: ${signal})` : ''}`);
+  onApplicationShutdown(signal?: string): void {
+    this.logger.log(
+      `Shutdown initiated${signal ? ` (signal: ${signal})` : ''}`,
+    );
   }
 
   enableShutdownHooks(app: INestApplication, timeoutMs = 15_000): void {
@@ -23,7 +25,9 @@ export class ShutdownService implements OnApplicationShutdown {
       process.on(signal, () => {
         this.logger.log(`Received ${signal} — starting graceful shutdown`);
         const timer = setTimeout(() => {
-          this.logger.error(`Shutdown timeout (${timeoutMs}ms) exceeded — forcing exit`);
+          this.logger.error(
+            `Shutdown timeout (${timeoutMs}ms) exceeded — forcing exit`,
+          );
           process.exit(1);
         }, timeoutMs);
         timer.unref();

@@ -9,9 +9,7 @@ import { ShutdownService } from './kernel/shutdown.service';
 
 @Global()
 @Module({
-  imports: [
-    ConfigModule.forRoot({ isGlobal: true, envFilePath: '.env' }),
-  ],
+  imports: [ConfigModule.forRoot({ isGlobal: true, envFilePath: '.env' })],
   controllers: [HealthController],
   providers: [
     { provide: EventBus, useClass: InProcessEventBus },

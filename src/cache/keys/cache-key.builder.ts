@@ -2,14 +2,22 @@ import { Injectable } from '@nestjs/common';
 import { CacheNamespace } from './cache-namespace.enum';
 
 export interface ICacheKeyBuilder {
-  forGuild(guildId: string, namespace: CacheNamespace, ...parts: readonly string[]): string;
+  forGuild(
+    guildId: string,
+    namespace: CacheNamespace,
+    ...parts: readonly string[]
+  ): string;
   forGlobal(namespace: CacheNamespace, ...parts: readonly string[]): string;
   guildNamespacePrefix(guildId: string, namespace: CacheNamespace): string;
 }
 
 @Injectable()
 export class CacheKeyBuilder implements ICacheKeyBuilder {
-  forGuild(guildId: string, namespace: CacheNamespace, ...parts: readonly string[]): string {
+  forGuild(
+    guildId: string,
+    namespace: CacheNamespace,
+    ...parts: readonly string[]
+  ): string {
     this.assertNonEmpty({ guildId, namespace });
     const suffix = parts.length > 0 ? `:${parts.join(':')}` : '';
     return `guild:${guildId}:${namespace}${suffix}`;
