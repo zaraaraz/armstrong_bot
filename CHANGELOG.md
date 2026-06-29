@@ -1,3 +1,10 @@
+## [1.1.2](https://github.com/zaraaraz/armstrong_bot/compare/v1.1.1...v1.1.2) (2026-06-29)
+
+
+### Bug Fixes
+
+* update commitlint action to version 6 and modify test coverage script ([4b7dc72](https://github.com/zaraaraz/armstrong_bot/commit/4b7dc728eb1ae915967a523b1f5b0075316db42a))
+
 ## [1.1.1](https://github.com/zaraaraz/armstrong_bot/compare/v1.1.0...v1.1.1) (2026-06-29)
 
 
