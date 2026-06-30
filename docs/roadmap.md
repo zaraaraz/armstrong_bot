@@ -37,14 +37,14 @@
 ## Phase 4 — Foundational Modules
 **Branch: `feature/core-modules`**
 
-| Order | Item | Spec |
-|---|---|---|
-| 13 | Scheduler | [modules/scheduler.md](modules/scheduler.md) |
-| 14 | Storage | [modules/storage.md](modules/storage.md) |
-| 15 | Audit | [modules/audit.md](modules/audit.md) |
-| 16 | Metrics | [modules/metrics.md](modules/metrics.md) |
-| 17 | Notifications | [modules/notifications.md](modules/notifications.md) |
-| 18 | Webhooks | [modules/webhooks.md](modules/webhooks.md) |
+| Order | Item | Spec | Status |
+|---|---|---|---|
+| 13 | Scheduler | [modules/scheduler.md](modules/scheduler.md) | ✅ Done |
+| 14 | Storage | [modules/storage.md](modules/storage.md) | |
+| 15 | Audit | [modules/audit.md](modules/audit.md) | |
+| 16 | Metrics | [modules/metrics.md](modules/metrics.md) | |
+| 17 | Notifications | [modules/notifications.md](modules/notifications.md) | |
+| 18 | Webhooks | [modules/webhooks.md](modules/webhooks.md) | |
 
 ## Phase 5 — Feature Modules
 **Branch: `feature/modules`**

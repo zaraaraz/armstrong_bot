@@ -10,6 +10,7 @@ import { PluginsModule } from './core/plugins/plugins.module';
 import { TestingModule } from './core/testing/testing.module';
 import { ApiModule } from './api/api.module';
 import { DashboardModule } from './dashboard/dashboard.module';
+import { SchedulerModule } from './modules/scheduler/scheduler.module';
 
 @Module({
   imports: [
@@ -24,6 +25,7 @@ import { DashboardModule } from './dashboard/dashboard.module';
     TestingModule,
     ApiModule,
     DashboardModule,
+    SchedulerModule,
   ],
 })
 export class AppModule {}

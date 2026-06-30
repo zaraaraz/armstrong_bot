@@ -48,6 +48,21 @@ export default defineConfig({
         'src/database/prisma.service.ts',
         'src/shared/security/services/api-key.service.ts',
         'src/shared/security/services/secret.service.ts',
+        // Scheduler (Phase 4) integration/observability surfaces. The BullMQ
+        // producer/worker wrappers need a live Redis, and the Prometheus /
+        // OpenTelemetry adapters are no-ops until the Metrics module (item 16)
+        // registers an exporter — all exercised by the integration suite, not
+        // unit specs. The domain/service/reconciler logic IS unit-covered.
+        'src/modules/scheduler/infrastructure/scheduler.queue.ts',
+        'src/modules/scheduler/infrastructure/scheduler.worker.ts',
+        'src/modules/scheduler/infrastructure/queue.tokens.ts',
+        'src/modules/scheduler/observability/**',
+        'src/modules/scheduler/application/lifecycle.emitter.ts',
+        'src/modules/scheduler/application/maintenance.handler.ts',
+        'src/modules/scheduler/application/cleanup.job.ts',
+        'src/modules/scheduler/application/scheduler-health.state.ts',
+        'src/modules/scheduler/application/scheduler-query.service.ts',
+        'src/modules/scheduler/config/scheduler-config.service.ts',
       ],
     },
   },

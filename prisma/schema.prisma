@@ -611,3 +611,70 @@ model CacheSetting {
   @@index([deletedAt])
   @@map("cache_settings")
 }
+
+// ─── Scheduler: Durable Jobs ──────────────────────────────────────────────
+
+enum ScheduleStatus {
+  pending
+  active
+  paused
+  completed
+  cancelled
+  failed
+}
+
+enum ScheduleType {
+  once
+  recurring
+}
+
+/// A durable schedule definition. The Scheduler module re-hydrates these into
+/// BullMQ on boot via the reconciler. `guildId` null => global/system job.
+model Schedule {
+  id             String         @id @default(cuid())
+  guildId        String?        @map("guild_id")
+  kind           String
+  type           ScheduleType
+  status         ScheduleStatus @default(pending)
+  payload        Json
+  idempotencyKey String?        @map("idempotency_key")
+  cron           String?
+  everyMs        Int?           @map("every_ms")
+  timezone       String         @default("UTC")
+  nextRunAt      DateTime?      @map("next_run_at")
+  lastRunAt      DateTime?      @map("last_run_at")
+  deferrable     Boolean        @default(true)
+  maxAttempts    Int            @default(5) @map("max_attempts")
+  bullJobId      String?        @map("bull_job_id")
+  createdAt      DateTime       @default(now()) @map("created_at")
+  updatedAt      DateTime       @updatedAt @map("updated_at")
+  deletedAt      DateTime?      @map("deleted_at")
+
+  runs ScheduleRun[]
+
+  @@unique([guildId, kind, idempotencyKey], name: "schedule_dedup")
+  @@index([guildId, status])
+  @@index([kind, status])
+  @@index([nextRunAt])
+  @@index([deletedAt])
+  @@map("schedules")
+}
+
+/// One execution attempt of a Schedule. Purged after `runRetentionDays`.
+model ScheduleRun {
+  id         String         @id @default(cuid())
+  scheduleId String         @map("schedule_id")
+  schedule   Schedule       @relation(fields: [scheduleId], references: [id], onDelete: Cascade)
+  guildId    String?        @map("guild_id")
+  attempt    Int            @default(1)
+  status     ScheduleStatus
+  startedAt  DateTime       @default(now()) @map("started_at")
+  finishedAt DateTime?      @map("finished_at")
+  durationMs Int?           @map("duration_ms")
+  error      String?        @db.Text
+  traceId    String?        @map("trace_id")
+
+  @@index([scheduleId, startedAt])
+  @@index([guildId, status])
+  @@map("schedule_runs")
+}

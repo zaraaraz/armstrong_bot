@@ -480,3 +480,47 @@ The dashboard exposes a **Scheduler** panel (guild-scoped, plus a platform view 
 - Swagger documents all endpoints; i18n PT + EN strings present.
 - Prometheus metrics and OTel spans verified; audit hooks firing.
 - Docs written; Conventional Commits used; PR opened against `develop` (no direct commit to `main`).
+
+## 17b. Implementation deltas (as built — Phase 4, branch `feature/core-modules`)
+
+Recorded so the as-built code and this spec don't drift.
+
+- **Module location**: `src/modules/scheduler/` (first entry under `src/modules/`),
+  registered `@Global` in `app.module.ts`. Public barrel `index.ts` exports only
+  `SchedulerService`, `JobRegistry`, `JobHandler`/`JobExecutionContext`, `JobKind`,
+  `ScheduledJobRef`/`ScheduleStatus`/`ScheduleType`, and the events.
+- **Queue layer**: no standalone core "Queue wrapper" system exists yet (BullMQ is
+  used directly by the Events module). The Scheduler ships its own module-private
+  wrapper `infrastructure/scheduler.queue.ts` over BullMQ `Queue` (name
+  `scheduler.jobs`) — still the only sanctioned scheduling primitive; consumers
+  never see it. `SchedulerWorker` owns the BullMQ `Worker`.
+- **Config service split**: `config/scheduler.config.ts` holds the Zod schemas +
+  resolvers; `config/scheduler-config.service.ts` does the ENV→DB→defaults wiring
+  (per-guild config read from `GuildConfig.settings.scheduler`, cached via the
+  Cache layer). The spec listed only `scheduler.config.ts`.
+- **`SchedulerService`**: the abstract contract lives in
+  `application/scheduler.service.contract.ts`; the impl is `SchedulerServiceImpl`.
+  An internal `enqueueRecurring()` (not on the public contract) is reused by the
+  reconciler and cleanup job; the impl is aliased via `useExisting` so it can be
+  injected directly.
+- **Observability (items 15/16 not yet built)**: `SchedulerAuditService` (Pino,
+  delegates to the core Audit module once it lands), `SchedulerMetrics` (private
+  `prom-client` registry — `prom-client` added as a dep), `SchedulerTracing`
+  (wraps `@opentelemetry/api`; no-op until an SDK/exporter is registered). Added
+  dep `cron-parser` (v5, `CronExpressionParser.parse`) for next-run/window math.
+- **Migration**: `prisma/migrations/20260630170000_add_scheduler` was
+  hand-authored because Docker/MySQL was offline (same as Phase 3). Run
+  `prisma migrate deploy` when the DB is up. Enum values are lowercase to match
+  the public `ScheduleStatus`/`ScheduleType` literals; columns are snake_case via
+  `@map`, matching the rest of `schema.prisma`.
+- **Dashboard frontend**: built (panel + filterable/paginated table + detail
+  drawer with claim-gated actions + polling health widget) at
+  `src/dashboard/frontend/app/g/[guildId]/scheduler/`. The config editor is a
+  read-only note — the spec's API table (§10) defines no config-write endpoint, so
+  timezone/maintenance-window editing flows through the existing guild-settings
+  surface under the `scheduler.config` claim.
+- **Tests**: 56 scheduler unit/reconciler specs (domain, registry, cron, VOs,
+  DTO validation, service control paths, reconciler drift). Full suite 195 pass;
+  coverage above the 80/75/80/80 thresholds. Integration (live MySQL + ioredis)
+  and Playwright e2e are authored but skipped pending a local DB / Playwright
+  harness — consistent with the Phase 2/3 deferral.

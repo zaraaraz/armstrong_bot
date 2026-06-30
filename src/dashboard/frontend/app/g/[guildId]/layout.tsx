@@ -3,6 +3,7 @@ import type { ReactNode } from 'react';
 const NAV = [
   ['overview', 'Overview'],
   ['modules', 'Modules'],
+  ['scheduler', 'Scheduler'],
   ['logs', 'Logs'],
   ['api-keys', 'API Keys'],
   ['backups', 'Backups'],
