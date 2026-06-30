@@ -1,3 +1,21 @@
+# [1.2.0](https://github.com/zaraaraz/armstrong_bot/compare/v1.1.2...v1.2.0) (2026-06-30)
+
+
+### Bug Fixes
+
+* **testing:** fix pre-push typecheck and lint failures ([3183c95](https://github.com/zaraaraz/armstrong_bot/commit/3183c95fb5227a46ad2e5be75678992337e78844))
+* update roadmap formatting and item descriptions for clarity ([e163586](https://github.com/zaraaraz/armstrong_bot/commit/e1635866cfc5ba813139abaefd079f4fae8609c4))
+
+
+### Features
+
+* **core-platform:** implement i18n and permissions core systems ([50babab](https://github.com/zaraaraz/armstrong_bot/commit/50babab547f7156146150b3e54c1ed918d164c29))
+* **events:** implement asynchronous and synchronous event dispatchers ([09f7a7f](https://github.com/zaraaraz/armstrong_bot/commit/09f7a7f0215994e6f3f15ee6427dacc892d8cb08))
+* **events:** wire @OnEvent decorator scanner into bootstrap ([515c0e4](https://github.com/zaraaraz/armstrong_bot/commit/515c0e455d91a251465666cdcac667ce3d5417f0)), closes [#6](https://github.com/zaraaraz/armstrong_bot/issues/6)
+* **plugins:** implement core plugin system (item 9) ([3feb3da](https://github.com/zaraaraz/armstrong_bot/commit/3feb3da19308ca098a4659edc36468e21a7427c4))
+* **security:** add cross-cutting @shared/security layer (core slice) ([23a4885](https://github.com/zaraaraz/armstrong_bot/commit/23a4885c023eeae303943b4011cbda391a874590))
+* **testing:** implement testing infrastructure (item 10) ([01de668](https://github.com/zaraaraz/armstrong_bot/commit/01de6684329a7d1c4b3b79675463806d3affd0ad))
+
 ## [1.1.2](https://github.com/zaraaraz/armstrong_bot/compare/v1.1.1...v1.1.2) (2026-06-29)
 
 
