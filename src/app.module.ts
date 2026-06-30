@@ -8,6 +8,8 @@ import { EventBusModule } from './core/events/event-bus.module';
 import { SecurityModule } from './shared/security/security.module';
 import { PluginsModule } from './core/plugins/plugins.module';
 import { TestingModule } from './core/testing/testing.module';
+import { ApiModule } from './api/api.module';
+import { DashboardModule } from './dashboard/dashboard.module';
 
 @Module({
   imports: [
@@ -20,6 +22,8 @@ import { TestingModule } from './core/testing/testing.module';
     SecurityModule,
     PluginsModule,
     TestingModule,
+    ApiModule,
+    DashboardModule,
   ],
 })
 export class AppModule {}

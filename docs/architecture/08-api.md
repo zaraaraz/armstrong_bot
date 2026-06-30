@@ -624,6 +624,37 @@ Module-owned claims (e.g. `tickets.read`) are **not** redefined here — they ar
 - [ ] Webhook ingress verifies signatures, persists `WebhookDelivery`, emits `webhook.received`, returns `202`.
 - [ ] Every request carries a correlation id present in logs, traces, and the `X-Request-Id` header.
 
+## 17b. Implementation Notes (Phase 3 deltas)
+
+Reconciliation decisions taken when implementing against the **existing** Phase 2
+codebase (recorded per §16.11 / §18 "deltas discovered"):
+
+- **API keys reuse `@shared/security`.** Phase 2 already shipped `ApiKeyService`
+  (raw key `ghk_<base64url>`, scrypt hash via `EncryptionService` — argon2id is
+  not a dependency), `ApiKeyController` (`api/v1/guilds/:guildId/api-keys`),
+  `ApiKeyGuard`, `RateLimitService`, `AuditInterceptor` and the `ApiKey` Prisma
+  model. To honour DRY and "never re-implement", `src/api` does **not** define a
+  competing `ApiKeyService`/keys controller; the security controller remains the
+  canonical key surface. Consequently the `ApiKeyScope` table from §9 was **not**
+  added — scopes stay on the existing `ApiKey.scopes` (comma-joined Text). The
+  raw-key format is `ghk_…`, not `gbk_…`.
+- **Versioning** uses hard-coded `@Controller('api/v1/...')` paths (the existing
+  project convention, e.g. `api/v1/plugins`) rather than Nest URI versioning, to
+  avoid re-prefixing other modules' root-mounted controllers.
+- **Cross-cutting providers** are applied via the `@ApiProtected()` /
+  `@ApiPublic()` composite decorators at the API controller boundary instead of
+  global `APP_*` providers, so the bot's other controllers are untouched.
+- **Webhook processing** flows through the Event Bus (`api.webhook.received`,
+  durable async delivery + dead-letter) rather than a dedicated `webhook-ingest`
+  BullMQ queue (BullMQ is a dependency but not yet wired anywhere). This reuses
+  existing retry/DLQ infrastructure; a queue can be introduced later without
+  changing the controller contract.
+- **Event names** follow the registry's 3-segment `module.entity.action` rule:
+  `api.request.completed`, `api.auth.failed`, `api.key.used`,
+  `api.webhook.received` (registered in `core/events/registry`).
+- **OpenTelemetry** spans are stubbed in `TraceInterceptor` (trace id generated +
+  propagated); binding a real OTel SDK is Phase 6 monitoring work.
+
 ## 18. Definition of Done
 
 - [ ] All unit, integration, and e2e tests pass (Vitest + Playwright); coverage meets the project threshold.

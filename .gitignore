@@ -37,3 +37,6 @@ coverage/
 .docker-data/
 
 /generated/prisma
+
+# Local agent memory (not project config; .claude/settings.json stays tracked)
+.claude/projects/

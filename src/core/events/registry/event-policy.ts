@@ -85,6 +85,46 @@ const POLICY_TABLE: Partial<Record<EventName, EventPolicy>> = {
     idempotent: false,
     fireAndForget: true,
   },
+  'api.request.completed': {
+    delivery: 'async',
+    idempotent: false,
+    fireAndForget: true,
+  },
+  'api.auth.failed': {
+    delivery: 'async',
+    idempotent: false,
+    fireAndForget: true,
+  },
+  'api.key.used': {
+    delivery: 'async',
+    idempotent: false,
+    fireAndForget: true,
+  },
+  'api.webhook.received': {
+    delivery: 'both',
+    idempotent: true,
+    fireAndForget: false,
+  },
+  'dashboard.module.toggled': {
+    delivery: 'async',
+    idempotent: true,
+    fireAndForget: false,
+  },
+  'dashboard.config.updated': {
+    delivery: 'async',
+    idempotent: true,
+    fireAndForget: false,
+  },
+  'dashboard.apikey.created': {
+    delivery: 'async',
+    idempotent: true,
+    fireAndForget: false,
+  },
+  'dashboard.backup.requested': {
+    delivery: 'async',
+    idempotent: true,
+    fireAndForget: false,
+  },
 };
 
 export function getEventPolicy(name: EventName): EventPolicy {

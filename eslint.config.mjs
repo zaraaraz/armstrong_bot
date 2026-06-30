@@ -6,7 +6,9 @@ import tseslint from 'typescript-eslint';
 
 export default tseslint.config(
   {
-    ignores: ['eslint.config.mjs'],
+    // The dashboard frontend is a separate Next.js deployable with its own
+    // toolchain (next lint / its own tsconfig); the root config does not lint it.
+    ignores: ['eslint.config.mjs', 'src/dashboard/frontend/**'],
   },
   eslint.configs.recommended,
   ...tseslint.configs.recommendedTypeChecked,

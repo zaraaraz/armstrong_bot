@@ -6,6 +6,8 @@ import type { I18nEventPayloads } from './payloads/i18n.payloads';
 import type { PermissionsEventPayloads } from './payloads/permissions.payloads';
 import type { SecurityEventPayloads } from './payloads/security.payloads';
 import type { PluginEventPayloads } from './payloads/plugin.payloads';
+import type { ApiEventPayloads } from './payloads/api.payloads';
+import type { DashboardEventPayloads } from './payloads/dashboard.payloads';
 
 export interface GhostEventMap
   extends
@@ -16,6 +18,8 @@ export interface GhostEventMap
     I18nEventPayloads,
     PermissionsEventPayloads,
     SecurityEventPayloads,
-    PluginEventPayloads {}
+    PluginEventPayloads,
+    ApiEventPayloads,
+    DashboardEventPayloads {}
 
 export type EventName = keyof GhostEventMap;

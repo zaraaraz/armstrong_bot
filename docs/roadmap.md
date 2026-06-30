@@ -29,10 +29,10 @@
 ## Phase 3 — API & Dashboard
 **Branch: `feature/api-dashboard`**
 
-| Order | Item | Spec |
-|---|---|---|
-| 11 | API | [architecture/08-api.md](architecture/08-api.md) |
-| 12 | Dashboard | [architecture/09-dashboard.md](architecture/09-dashboard.md) |
+| Order | Item | Spec | Status |
+|---|---|---|---|
+| 11 | API | [architecture/08-api.md](architecture/08-api.md) | ✅ done (reuses `@shared/security`; see §17b) |
+| 12 | Dashboard | [architecture/09-dashboard.md](architecture/09-dashboard.md) | ✅ backend + frontend scaffold (pages/e2e deferred; see §17b) |
 
 ## Phase 4 — Foundational Modules
 **Branch: `feature/core-modules`**

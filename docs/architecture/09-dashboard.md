@@ -585,6 +585,32 @@ backend guards.
 - Forbidden/expired-session/invalid-ticket requests are rejected and logged; no internal error leaks.
 - UI renders in PT and EN.
 
+## 17b. Implementation Notes (Phase 3 deltas)
+
+- **Scope: backend-first.** The full Dashboard **backend** (NestJS, `src/dashboard`)
+  is implemented: config, repositories (`DashboardSession`, `Backup`,
+  `DashboardAuditEntry`), services (auth/session/guild-access/api-key/backup/
+  aggregation), guards (`SessionGuard`/`GuildManageGuard`/`ClaimGuard`), the
+  ticket-authenticated WebSocket gateway, and the auth/guilds/api-keys/backups/
+  realtime controllers. The **Next.js frontend** is delivered as a buildable
+  scaffold (App Router structure, edge `middleware.ts` guard, login/guild-select/
+  overview pages, typed BFF client, realtime hook). The remaining guild pages and
+  Playwright e2e are deferred — they depend on module public APIs that land in
+  later roadmap phases (see `frontend/README.md`).
+- **API keys reuse `@shared/security`.** The dashboard's `ApiKey` model from §9
+  was **not** added; `DashboardApiKeyService` delegates to the shared security
+  `ApiKeyService` (single source of truth) and adapts results into the paginated
+  view contract. Hashing is scrypt (argon2id is not a dependency).
+- **Sessions** keep a hot copy in the Cache layer plus a durable
+  `dashboard_sessions` row with the Discord refresh token AES-256-GCM encrypted
+  via the security `EncryptionService`.
+- **`dashboard.*` events** registered in the core event registry:
+  `dashboard.module.toggled`, `dashboard.config.updated`, `dashboard.apikey.created`,
+  `dashboard.backup.requested`.
+- **Backups** create a durable record and emit `dashboard.backup.requested`; the
+  Backup module (Phase 4) will consume it and drive the job — the dashboard
+  requests and observes, it never runs the backup itself.
+
 ## 18. Definition of Done
 
 - All unit, integration and Playwright tests pass; security negative-paths covered.

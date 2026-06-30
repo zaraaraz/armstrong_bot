@@ -1,21 +1,18 @@
 import { NestFactory } from '@nestjs/core';
-import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { AppModule } from './app.module';
 import { ShutdownService } from './core/kernel/shutdown.service';
+import { buildOpenApiDocument, setupSwagger } from './api/swagger';
 
 async function bootstrap(): Promise<void> {
-  const app = await NestFactory.create(AppModule, { bufferLogs: true });
+  const app = await NestFactory.create(AppModule, {
+    bufferLogs: true,
+    // Capture the raw request body so webhook signature verification can run
+    // over the exact bytes the provider signed.
+    rawBody: true,
+  });
 
-  const swagger = new DocumentBuilder()
-    .setTitle('Armstrong Bot API')
-    .setVersion('0.1.0')
-    .addBearerAuth()
-    .build();
-  SwaggerModule.setup(
-    'api/docs',
-    app,
-    SwaggerModule.createDocument(app, swagger),
-  );
+  const document = buildOpenApiDocument(app);
+  setupSwagger(app, document, 'api/docs');
 
   const shutdown = app.get(ShutdownService);
   const timeoutMs = Number(process.env.SHUTDOWN_TIMEOUT_MS ?? 15_000);

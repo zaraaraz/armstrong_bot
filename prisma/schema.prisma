@@ -512,6 +512,88 @@ enum TestSuite {
   E2E
 }
 
+// ─── API: Webhook Deliveries ──────────────────────────────────────────────
+
+/// Durable audit trail of every inbound webhook accepted at the API boundary.
+/// Verified payloads are persisted, enqueued for processing, and pruned by a
+/// scheduled job past the configured retention.
+model WebhookDelivery {
+  id          String    @id @default(cuid())
+  provider    String    @db.VarChar(16) // discord | github | stripe | fivem
+  eventType   String    @map("event_type") @db.VarChar(128)
+  guildId     String?   @map("guild_id") @db.VarChar(20)
+  signature   String?   @db.VarChar(512)
+  status      String    @default("received") @db.VarChar(20) // received | processed | failed
+  attempts    Int       @default(0)
+  payload     Json
+  error       String?   @db.Text
+  requestId   String    @map("request_id") @db.VarChar(64)
+  receivedAt  DateTime  @default(now()) @map("received_at")
+  processedAt DateTime? @map("processed_at")
+  deletedAt   DateTime? @map("deleted_at")
+
+  @@index([provider, eventType])
+  @@index([guildId])
+  @@index([status])
+  @@index([requestId])
+  @@map("webhook_deliveries")
+}
+
+// ─── Dashboard ────────────────────────────────────────────────────────────
+
+/// Durable record of a dashboard login session (hot copy lives in Cache).
+/// The Discord refresh token is encrypted at rest. Soft-revoked via revokedAt.
+model DashboardSession {
+  id           String    @id @default(cuid())
+  discordId    String    @map("discord_id") @db.VarChar(20)
+  username     String    @db.VarChar(32)
+  refreshToken String    @map("refresh_token") @db.Text // AES-256-GCM ciphertext
+  createdAt    DateTime  @default(now()) @map("created_at")
+  lastSeenAt   DateTime  @default(now()) @map("last_seen_at")
+  expiresAt    DateTime  @map("expires_at")
+  revokedAt    DateTime? @map("revoked_at")
+
+  @@index([discordId])
+  @@index([expiresAt])
+  @@index([revokedAt])
+  @@map("dashboard_sessions")
+}
+
+/// A backup job triggered from the dashboard. Status tracks the BullMQ job.
+model Backup {
+  id          String    @id @default(cuid())
+  guildId     String    @map("guild_id") @db.VarChar(20)
+  status      String    @default("pending") @db.VarChar(20) // pending | running | completed | failed
+  jobId       String?   @map("job_id") @db.VarChar(64)
+  sizeBytes   BigInt?   @map("size_bytes")
+  storageKey  String?   @map("storage_key") @db.VarChar(512)
+  error       String?   @db.Text
+  requestedBy String    @map("requested_by") @db.VarChar(20)
+  createdAt   DateTime  @default(now()) @map("created_at")
+  completedAt DateTime? @map("completed_at")
+  deletedAt   DateTime? @map("deleted_at")
+
+  @@index([guildId, status])
+  @@index([createdAt])
+  @@index([deletedAt])
+  @@map("dashboard_backups")
+}
+
+/// Append-only audit entry written for every dashboard write action.
+model DashboardAuditEntry {
+  id        String   @id @default(cuid())
+  guildId   String   @map("guild_id") @db.VarChar(20)
+  actorId   String   @map("actor_id") @db.VarChar(20)
+  action    String   @db.VarChar(64) // e.g. module.toggle, config.update, apikey.create
+  target    String?  @db.VarChar(255)
+  metadata  Json?
+  createdAt DateTime @default(now()) @map("created_at")
+
+  @@index([guildId, createdAt])
+  @@index([actorId])
+  @@map("dashboard_audit_entries")
+}
+
 // ─── Cache: Settings ──────────────────────────────────────────────────────
 
 /// Optional per-guild (or global) cache overrides.
