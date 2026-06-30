@@ -39,7 +39,7 @@
 
 | Order | Item | Spec | Status |
 |---|---|---|---|
-| 13 | Scheduler | [modules/scheduler.md](modules/scheduler.md) | ✅ Done |
+| 13 | Scheduler | [modules/scheduler.md](modules/scheduler.md) |
 | 14 | Storage | [modules/storage.md](modules/storage.md) | |
 | 15 | Audit | [modules/audit.md](modules/audit.md) | |
 | 16 | Metrics | [modules/metrics.md](modules/metrics.md) | |
