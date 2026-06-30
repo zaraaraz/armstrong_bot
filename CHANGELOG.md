@@ -1,3 +1,10 @@
+# [1.3.0](https://github.com/zaraaraz/armstrong_bot/compare/v1.2.0...v1.3.0) (2026-06-30)
+
+
+### Features
+
+* **api,dashboard:** implement Phase 3 API & Dashboard backend (items 11-12) ([bae9673](https://github.com/zaraaraz/armstrong_bot/commit/bae9673b8fbd058b6145e34c870099825b65bc66))
+
 # [1.2.0](https://github.com/zaraaraz/armstrong_bot/compare/v1.1.2...v1.2.0) (2026-06-30)
 
 
