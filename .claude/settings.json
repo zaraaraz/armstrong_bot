@@ -1,0 +1,18 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npx tsc *)",
+      "Bash(npx eslint *)",
+      "Bash(npx jest *)",
+      "Bash(npx prettier *)",
+      "Bash(npx prisma generate)",
+      "Bash(npx prisma migrate dev *)",
+      "Bash(npx prisma migrate status)",
+      "Bash(npx prisma db push *)",
+      "Bash(npm run test *)",
+      "Bash(npm run test:cov *)",
+      "Bash(npm run lint)",
+      "Bash(npm run build)"
+    ]
+  }
+}

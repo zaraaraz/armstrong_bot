@@ -6,6 +6,7 @@ import { I18nModule } from './core/i18n/i18n.module';
 import { PermissionsModule } from './core/permissions/permissions.module';
 import { EventBusModule } from './core/events/event-bus.module';
 import { SecurityModule } from './shared/security/security.module';
+import { PluginsModule } from './core/plugins/plugins.module';
 
 @Module({
   imports: [
@@ -16,6 +17,7 @@ import { SecurityModule } from './shared/security/security.module';
     PermissionsModule,
     EventBusModule,
     SecurityModule,
+    PluginsModule,
   ],
 })
 export class AppModule {}

@@ -391,6 +391,97 @@ enum KeyState {
   RETIRED
 }
 
+// ─── Plugin System ────────────────────────────────────────────────────────
+
+/// A plugin installed in the host.
+model Plugin {
+  id          String       @id @default(cuid())
+  name        String       @unique @db.VarChar(128)
+  displayName String       @map("display_name") @db.VarChar(128)
+  version     String       @db.VarChar(32)
+  author      String       @db.VarChar(128)
+  scope       PluginScope  @default(GUILD)
+  status      PluginStatus @default(INSTALLED)
+  sdkRange    String       @map("sdk_range") @db.VarChar(64)
+  checksum    String?      @db.VarChar(64)
+  manifest    Json
+  installedAt DateTime     @default(now()) @map("installed_at")
+  updatedAt   DateTime     @updatedAt @map("updated_at")
+  deletedAt   DateTime?    @map("deleted_at")
+
+  enablements PluginEnablement[]
+  configs     PluginConfig[]
+  versions    PluginVersionHistory[]
+
+  @@index([name])
+  @@index([status])
+  @@index([scope])
+  @@index([deletedAt])
+  @@map("plugins")
+}
+
+/// Per-guild (or global) enablement state for a plugin.
+model PluginEnablement {
+  id        String    @id @default(cuid())
+  pluginId  String    @map("plugin_id")
+  guildId   String?   @map("guild_id") @db.VarChar(20)
+  enabled   Boolean   @default(true)
+  enabledBy String    @map("enabled_by") @db.VarChar(20)
+  enabledAt DateTime  @default(now()) @map("enabled_at")
+  deletedAt DateTime? @map("deleted_at")
+
+  plugin Plugin @relation(fields: [pluginId], references: [id], onDelete: Cascade)
+
+  @@unique([pluginId, guildId])
+  @@index([guildId])
+  @@index([pluginId])
+  @@map("plugin_enablements")
+}
+
+/// Per-plugin, per-guild (or global) configuration blob.
+model PluginConfig {
+  id        String    @id @default(cuid())
+  pluginId  String    @map("plugin_id")
+  guildId   String?   @map("guild_id") @db.VarChar(20)
+  values    Json
+  updatedAt DateTime  @updatedAt @map("updated_at")
+
+  plugin Plugin @relation(fields: [pluginId], references: [id], onDelete: Cascade)
+
+  @@unique([pluginId, guildId])
+  @@index([pluginId])
+  @@map("plugin_configs")
+}
+
+/// Immutable record of every version change for a plugin.
+model PluginVersionHistory {
+  id          String    @id @default(cuid())
+  pluginId    String    @map("plugin_id")
+  fromVersion String?   @map("from_version") @db.VarChar(32)
+  toVersion   String    @map("to_version") @db.VarChar(32)
+  actorId     String    @map("actor_id") @db.VarChar(20)
+  appliedAt   DateTime  @default(now()) @map("applied_at")
+
+  plugin Plugin @relation(fields: [pluginId], references: [id], onDelete: Cascade)
+
+  @@index([pluginId])
+  @@map("plugin_version_histories")
+}
+
+enum PluginScope {
+  GUILD
+  GLOBAL
+}
+
+enum PluginStatus {
+  INSTALLED
+  ENABLED
+  DISABLED
+  ERRORED
+  UPDATING
+  REMOVED
+}
+
 // ─── Cache: Settings ──────────────────────────────────────────────────────
 
 /// Optional per-guild (or global) cache overrides.
