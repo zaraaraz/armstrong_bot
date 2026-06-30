@@ -33,9 +33,10 @@ export class FakeEventBusImpl extends EventBus implements FakeEventBus {
   override publish<K extends EventName>(
     name: K,
     payload: GhostEventMap[K],
+    _options?: PublishOptions,
   ): Promise<EventEnvelope<K>> {
     this._recorded.push({ name, payload, emittedAt: new Date() });
-    return {
+    return Promise.resolve({
       id: `fake-${this._recorded.length}`,
       name,
       payload,
@@ -45,7 +46,7 @@ export class FakeEventBusImpl extends EventBus implements FakeEventBus {
       correlationId: `corr-${this._recorded.length}`,
       causationId: null,
       version: 1,
-    };
+    });
   }
 
   override subscribe<K extends EventName>(
