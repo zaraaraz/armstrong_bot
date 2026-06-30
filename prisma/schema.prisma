@@ -482,6 +482,36 @@ enum PluginStatus {
   REMOVED
 }
 
+// ─── Testing: CI Telemetry ────────────────────────────────────────────────
+
+/// Optional CI/test telemetry — records suite outcomes per commit (guild-agnostic).
+model TestRun {
+  id               String     @id @default(cuid())
+  commitSha        String     @map("commit_sha") @db.VarChar(40)
+  branch           String     @db.VarChar(255)
+  suite            TestSuite
+  passed           Int
+  failed           Int
+  skipped          Int        @default(0)
+  durationMs       Int        @map("duration_ms")
+  coverageLines    Decimal?   @map("coverage_lines") @db.Decimal(5, 2)
+  coverageBranches Decimal?   @map("coverage_branches") @db.Decimal(5, 2)
+  createdAt        DateTime   @default(now()) @map("created_at")
+  deletedAt        DateTime?  @map("deleted_at")
+
+  @@index([commitSha])
+  @@index([branch, createdAt])
+  @@index([suite, createdAt])
+  @@map("test_runs")
+}
+
+enum TestSuite {
+  UNIT
+  INTEGRATION
+  CONTRACT
+  E2E
+}
+
 // ─── Cache: Settings ──────────────────────────────────────────────────────
 
 /// Optional per-guild (or global) cache overrides.

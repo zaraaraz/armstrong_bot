@@ -51,8 +51,8 @@ describe('PluginDependencyResolver', () => {
       registry.set('dep-a', {
         plugin: {
           manifest: makeManifest({ name: 'dep-a', version: '2.1.0' }),
-          onEnable: jest.fn(),
-          onDisable: jest.fn(),
+          onEnable: vi.fn(),
+          onDisable: vi.fn(),
         },
         status: PluginStatus.Enabled,
         enabledGuilds: new Set(),
@@ -78,8 +78,8 @@ describe('PluginDependencyResolver', () => {
       registry.set('dep-a', {
         plugin: {
           manifest: makeManifest({ name: 'dep-a', version: '3.0.0' }),
-          onEnable: jest.fn(),
-          onDisable: jest.fn(),
+          onEnable: vi.fn(),
+          onDisable: vi.fn(),
         },
         status: PluginStatus.Enabled,
         enabledGuilds: new Set(),

@@ -23,8 +23,8 @@ function makeEntry(overrides: Partial<Plugin> = {}): LoadedPluginEntry {
         configSchema: z.object({}),
         i18nNamespaces: [],
       },
-      onEnable: jest.fn().mockResolvedValue(undefined),
-      onDisable: jest.fn().mockResolvedValue(undefined),
+      onEnable: vi.fn().mockResolvedValue(undefined),
+      onDisable: vi.fn().mockResolvedValue(undefined),
       ...overrides,
     },
     status: PluginStatus.Installed,
@@ -81,7 +81,7 @@ describe('PluginLifecycleService', () => {
 
   describe('runHook', () => {
     it('invokes onEnable and resolves', async () => {
-      const onEnable = jest.fn().mockResolvedValue(undefined);
+      const onEnable = vi.fn().mockResolvedValue(undefined);
       const entry = makeEntry({ onEnable });
       await service.runHook(entry, 'enable', fakeCtx, 5000);
       expect(onEnable).toHaveBeenCalledWith(fakeCtx);
@@ -96,7 +96,7 @@ describe('PluginLifecycleService', () => {
 
     it('throws PluginError on hook failure', async () => {
       const entry = makeEntry({
-        onEnable: jest.fn().mockRejectedValue(new Error('boom')),
+        onEnable: vi.fn().mockRejectedValue(new Error('boom')),
       });
       await expect(
         service.runHook(entry, 'enable', fakeCtx, 5000),
@@ -107,7 +107,7 @@ describe('PluginLifecycleService', () => {
 
     it('throws HookTimeout when hook exceeds timeoutMs', async () => {
       const entry = makeEntry({
-        onEnable: jest.fn().mockImplementation(() => new Promise(() => {})),
+        onEnable: vi.fn().mockImplementation(() => new Promise(() => {})),
       });
       await expect(
         service.runHook(entry, 'enable', fakeCtx, 50),
@@ -119,8 +119,8 @@ describe('PluginLifecycleService', () => {
 
   describe('drainDisposers', () => {
     it('calls all disposers and empties the array', () => {
-      const d1 = jest.fn();
-      const d2 = jest.fn();
+      const d1 = vi.fn();
+      const d2 = vi.fn();
       const entry = makeEntry();
       entry.disposers.push(d1, d2);
       service.drainDisposers(entry);

@@ -7,6 +7,7 @@ import { PermissionsModule } from './core/permissions/permissions.module';
 import { EventBusModule } from './core/events/event-bus.module';
 import { SecurityModule } from './shared/security/security.module';
 import { PluginsModule } from './core/plugins/plugins.module';
+import { TestingModule } from './core/testing/testing.module';
 
 @Module({
   imports: [
@@ -18,6 +19,7 @@ import { PluginsModule } from './core/plugins/plugins.module';
     EventBusModule,
     SecurityModule,
     PluginsModule,
+    TestingModule,
   ],
 })
 export class AppModule {}
