@@ -81,7 +81,12 @@ export class DashboardAuthController {
   @UseGuards(SessionGuard)
   @ApiOperation({ summary: 'Current dashboard user' })
   me(@Req() req: DashboardRequest): unknown {
-    return req.dashboard?.session.user;
+    // clientId is not secret (it appears in every OAuth URL); the frontend uses
+    // it to build the bot invite link for guilds where the bot isn't installed.
+    return {
+      ...req.dashboard?.session.user,
+      clientId: this.config.oauth.clientId,
+    };
   }
 
   private cookie(req: Request, name: string): string | null {

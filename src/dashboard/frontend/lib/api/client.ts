@@ -12,6 +12,8 @@ export interface DashboardUser {
   globalName: string | null;
   avatarHash: string | null;
   isBotOwner: boolean;
+  /** Discord application client id — used to build the bot invite link. */
+  clientId: string;
 }
 
 export interface ManageableGuild {

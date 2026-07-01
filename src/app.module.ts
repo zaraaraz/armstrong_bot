@@ -11,6 +11,7 @@ import { TestingModule } from './core/testing/testing.module';
 import { ApiModule } from './api/api.module';
 import { DashboardModule } from './dashboard/dashboard.module';
 import { SchedulerModule } from './modules/scheduler/scheduler.module';
+import { BotModule } from './bot/bot.module';
 
 @Module({
   imports: [
@@ -26,6 +27,7 @@ import { SchedulerModule } from './modules/scheduler/scheduler.module';
     ApiModule,
     DashboardModule,
     SchedulerModule,
+    BotModule,
   ],
 })
 export class AppModule {}
