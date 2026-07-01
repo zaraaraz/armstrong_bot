@@ -1,3 +1,10 @@
+## [1.7.1](https://github.com/zaraaraz/armstrong_bot/compare/v1.7.0...v1.7.1) (2026-07-01)
+
+
+### Bug Fixes
+
+* **dashboard:** derive botPresent from live guild registry, not static env ([4d557d3](https://github.com/zaraaraz/armstrong_bot/commit/4d557d39e878402663fa1660228ba2b1b1d629ca))
+
 # [1.7.0](https://github.com/zaraaraz/armstrong_bot/compare/v1.6.0...v1.7.0) (2026-07-01)
 
 
