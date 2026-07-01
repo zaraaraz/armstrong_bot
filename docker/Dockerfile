@@ -23,6 +23,9 @@ RUN apt-get update \
   && apt-get install -y --no-install-recommends openssl \
   && rm -rf /var/lib/apt/lists/*
 RUN useradd --uid 10001 --create-home armstrong
+# Mount point for the storage module's local driver; a named volume mounted
+# here inherits this ownership on first use, so the non-root user can write.
+RUN mkdir -p /data/storage && chown armstrong:armstrong /data/storage
 COPY --from=build --chown=armstrong:armstrong /app/node_modules ./node_modules
 COPY --from=build --chown=armstrong:armstrong /app/dist ./dist
 COPY --from=build --chown=armstrong:armstrong /app/prisma ./prisma

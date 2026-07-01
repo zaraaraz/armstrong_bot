@@ -1,3 +1,24 @@
+## [1.7.1](https://github.com/zaraaraz/armstrong_bot/compare/v1.7.0...v1.7.1) (2026-07-01)
+
+
+### Bug Fixes
+
+* **dashboard:** derive botPresent from live guild registry, not static env ([4d557d3](https://github.com/zaraaraz/armstrong_bot/commit/4d557d39e878402663fa1660228ba2b1b1d629ca))
+
+# [1.7.0](https://github.com/zaraaraz/armstrong_bot/compare/v1.6.0...v1.7.0) (2026-07-01)
+
+
+### Features
+
+* **storage:** implement Storage module (Phase 4, item 14) ([19056e1](https://github.com/zaraaraz/armstrong_bot/commit/19056e17db15d23275343c72b2af83c7669fe60a))
+
+# [1.6.0](https://github.com/zaraaraz/armstrong_bot/compare/v1.5.2...v1.6.0) (2026-07-01)
+
+
+### Features
+
+* **bot:** bring the bot online on Discord + dashboard invite links ([9c1f49b](https://github.com/zaraaraz/armstrong_bot/commit/9c1f49ba82a248511e18ce824c6b8ba659350fbc))
+
 ## [1.5.2](https://github.com/zaraaraz/armstrong_bot/compare/v1.5.1...v1.5.2) (2026-07-01)
 
 

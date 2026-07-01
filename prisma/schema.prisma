@@ -678,3 +678,50 @@ model ScheduleRun {
   @@index([guildId, status])
   @@map("schedule_runs")
 }
+
+// ─── Storage module (Phase 4, item 14) ──────────────────────────────────────
+
+enum StorageNamespace {
+  TRANSCRIPTS
+  BACKUPS
+  RANK_CARDS
+  EXPORTS
+  PLUGIN
+}
+
+/// Catalog row per logical object. Bytes live in the active storage driver.
+/// Content-addressed + ref-counted so identical bytes are stored once.
+model StorageObject {
+  id          String           @id @default(cuid())
+  guildId     String?          @map("guild_id")
+  namespace   StorageNamespace
+  key         String
+  contentHash String           @map("content_hash")
+  size        Int
+  contentType String           @map("content_type")
+  filename    String?
+  ownerType   String           @map("owner_type")
+  ownerId     String           @map("owner_id")
+  immutable   Boolean          @default(true)
+  refCount    Int              @default(1) @map("ref_count")
+  metadata    Json?
+  createdAt   DateTime         @default(now()) @map("created_at")
+  updatedAt   DateTime         @updatedAt @map("updated_at")
+  deletedAt   DateTime?        @map("deleted_at")
+
+  @@index([guildId, namespace])
+  @@index([contentHash])
+  @@index([ownerType, ownerId])
+  @@index([deletedAt])
+  @@map("storage_objects")
+}
+
+/// Aggregated usage per guild for fast quota checks (no SUM scan).
+model StorageUsage {
+  guildId     String   @id @map("guild_id")
+  usedBytes   BigInt   @default(0) @map("used_bytes")
+  objectCount Int      @default(0) @map("object_count")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+
+  @@map("storage_usage")
+}

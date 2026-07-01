@@ -11,6 +11,7 @@ import { TestingModule } from './core/testing/testing.module';
 import { ApiModule } from './api/api.module';
 import { DashboardModule } from './dashboard/dashboard.module';
 import { SchedulerModule } from './modules/scheduler/scheduler.module';
+import { StorageModule } from './modules/storage/storage.module';
 import { BotModule } from './bot/bot.module';
 
 @Module({
@@ -27,6 +28,7 @@ import { BotModule } from './bot/bot.module';
     ApiModule,
     DashboardModule,
     SchedulerModule,
+    StorageModule,
     BotModule,
   ],
 })

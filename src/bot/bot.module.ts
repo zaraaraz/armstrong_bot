@@ -3,6 +3,7 @@ import { NecordModule } from 'necord';
 import { GatewayIntentBits, Partials } from 'discord.js';
 import { PingCommand } from './commands/ping.command';
 import { BotGatewayListener } from './listeners/bot-gateway.listener';
+import { GuildRegistryRepository } from './infrastructure/guild-registry.repository';
 
 /**
  * Discord gateway module. Connects the bot to Discord (Necord + discord.js),
@@ -26,6 +27,6 @@ import { BotGatewayListener } from './listeners/bot-gateway.listener';
       partials: [Partials.Message, Partials.Channel],
     }),
   ],
-  providers: [PingCommand, BotGatewayListener],
+  providers: [PingCommand, BotGatewayListener, GuildRegistryRepository],
 })
 export class BotModule {}
