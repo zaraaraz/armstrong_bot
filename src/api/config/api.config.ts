@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { envBoolean } from '../../shared/config/env-boolean';
 
 /**
  * Zod-validated API configuration. Resolution order is ENV → DB → defaults,
@@ -20,7 +21,7 @@ export const apiConfigSchema = z.object({
   session: z.object({
     cookieName: z.string().default('gb_session'),
     ttlSeconds: z.coerce.number().int().positive().default(86_400), // 24h
-    secure: z.coerce.boolean().default(true),
+    secure: envBoolean(true),
   }),
 
   discordOAuth: z.object({
