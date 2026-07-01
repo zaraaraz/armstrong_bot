@@ -43,6 +43,10 @@ export default defineConfig({
         // keeps the unit-coverage signal focused on code this slice owns.
         'src/core/permissions/**',
         'src/cache/cache.service.ts',
+        // The L1/L2 stores wrap an in-process LRU and a live Redis connection;
+        // they are exercised by the integration suite alongside cache.service,
+        // not by unit specs (consistent with the rest of the cache module).
+        'src/cache/stores/**',
         'src/cache/keys/**',
         'src/core/module-system/module-registry.ts',
         'src/database/prisma.service.ts',
