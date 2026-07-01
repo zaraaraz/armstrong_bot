@@ -86,6 +86,9 @@ jobs:
             set -a; . ./.deploy.env; set +a
             export APP_IMAGE="ghcr.io/${{ github.repository }}:sha-${{ github.sha }}"
             docker compose -f docker-compose.prod.yml --env-file .deploy.env pull
+            # Stop the previous stack first so fixed container_names never clash
+            # with leftovers. Volumes (data) are preserved across down/up.
+            docker compose -f docker-compose.prod.yml --env-file .deploy.env down --remove-orphans || true
             docker compose -f docker-compose.prod.yml --env-file .deploy.env up -d --remove-orphans
             docker image prune -f
             echo "waiting for app health..."
