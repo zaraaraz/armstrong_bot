@@ -1,98 +1,112 @@
+<h1 align="center">👻 Ghost Bot</h1>
+
 <p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="120" alt="Nest Logo" /></a>
+  <strong>An enterprise-grade, modular Discord bot platform — built to last years, not weekends.</strong>
 </p>
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
-
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg" alt="Donate us"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow" alt="Follow us on Twitter"></a>
+<p align="center">
+  <a href="https://github.com/zaraaraz/armstrong_bot/actions/workflows/ci.yml"><img src="https://github.com/zaraaraz/armstrong_bot/actions/workflows/ci.yml/badge.svg" alt="CI" /></a>
+  <a href="https://github.com/zaraaraz/armstrong_bot/actions/workflows/deploy.yml"><img src="https://github.com/zaraaraz/armstrong_bot/actions/workflows/deploy.yml/badge.svg" alt="Deploy" /></a>
+  <a href="https://github.com/zaraaraz/armstrong_bot/actions/workflows/codeql.yml"><img src="https://github.com/zaraaraz/armstrong_bot/actions/workflows/codeql.yml/badge.svg" alt="CodeQL" /></a>
+  <img src="https://img.shields.io/badge/TypeScript-strict-3178C6?logo=typescript&logoColor=white" alt="TypeScript strict" />
+  <img src="https://img.shields.io/badge/coverage-gated%20in%20CI-brightgreen" alt="Coverage gated" />
 </p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
 
-## Description
+---
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+Most Discord bots start as a single `index.js` and grow into a 15,000-line file everyone is afraid to touch. **Ghost Bot is the opposite bet**: a platform where every capability is an isolated, spec-driven module on top of a shared core — so the bot can grow for years without collapsing under its own weight.
 
-## Project setup
+It is **multi-guild** by design, **event-driven** at its core, and ships with a **web dashboard**, a **REST API**, and a **fully automated deploy pipeline**. Nothing here is scaffolding: every merged module is implemented, tested, documented and running in production.
 
-```bash
-$ npm install
+## ✨ What's inside
+
+| | |
+|---|---|
+| 🤖 **Discord gateway** | Necord + discord.js — slash commands, gateway events bridged onto the internal event bus |
+| 🖥️ **Web dashboard** | Next.js app with Discord OAuth login, guild selector, module panels, API-key & backup management, live log stream over WebSockets |
+| 🔌 **REST API** | Versioned (`/api/v1`), Swagger-documented, JWT + API-key + session auth, rate-limited |
+| 🧩 **Plugin system** | Manifest-based plugins with lifecycle hooks (install/enable/disable) that extend the bot without touching core |
+| 🌍 **i18n** | Full translation engine (PT 🇵🇹 primary, EN 🇬🇧 secondary) — namespaces, ICU plurals, per-guild & per-user locale, DB-editable |
+| 🛡️ **Permissions** | Claim-based with wildcards (`tickets.*`, `storage.delete`), groups, inheritance, Discord-role mapping |
+| ⏰ **Scheduler** | Cron / delayed / recurring jobs over BullMQ with retries, DLQ, maintenance windows and a dashboard panel |
+| 🗄️ **Storage** | Content-addressed blob store with dedupe, per-guild quotas, HMAC-signed downloads and swappable drivers (local → S3/R2/Backblaze) |
+| 🔐 **Security layer** | Encrypted secrets at rest, Argon2id-hashed API keys, sliding-window rate limits, audit hooks, log redaction |
+
+## 🏛️ Architecture
+
+Clean Architecture + DDD-lite, enforced — not aspirational:
+
+```
+Controller / Slash Command      ← thin: validate, delegate, format
+        │
+Application Service             ← orchestration, quotas, events
+        │
+Domain Service                  ← pure logic, unit-tested in isolation
+        │
+Repository                      ← the ONLY layer that touches Prisma
+        │
+MariaDB / Redis / BullMQ
 ```
 
-## Compile and run the project
+**Modules never import each other's internals.** They communicate through a strongly-typed **Event Bus** (`storage.object.stored`, `scheduler.job.completed`, …) or through a module's published public contract — nothing else. That single rule is what keeps 30+ planned modules from becoming a big ball of mud.
 
-```bash
-# development
-$ npm run start
-
-# watch mode
-$ npm run start:dev
-
-# production mode
-$ npm run start:prod
+```mermaid
+flowchart LR
+    D[Discord Gateway] --> B(Bot Module)
+    B --> EB{{Event Bus}}
+    API[REST API] --> S[Application Services]
+    DASH[Next.js Dashboard] --> API
+    S --> EB
+    EB --> M1[Scheduler]
+    EB --> M2[Storage]
+    EB --> M3[Feature Modules …]
+    S --> R[(MariaDB)]
+    S --> C[(Redis)]
+    M1 --> Q[[BullMQ]]
 ```
 
-## Run tests
+Every module follows the same blueprint — `domain/`, `application/`, `infrastructure/`, `api/`, `events/`, `observability/` — with a public `index.ts` barrel as its only importable surface. One module = one spec = one branch = one reviewed merge.
 
-```bash
-# unit tests
-$ npm run test
+## 📐 Spec-driven development
 
-# e2e tests
-$ npm run test:e2e
+The entire platform was designed **before** it was built: [`docs/`](docs/) holds ~20,000 lines of engineering specifications — one document per architectural concern and per module, each with public interfaces, Prisma schema, events, permissions, an ordered implementation plan and acceptance criteria.
 
-# test coverage
-$ npm run test:cov
+```
+docs/
+├── 00-project.md          ← the contract every module obeys
+├── architecture/          ← core, database, cache, i18n, permissions,
+│                            events, plugins, API, dashboard, security, testing, CI/CD
+├── modules/               ← one spec per module (19 of them)
+├── development/           ← coding standards, branching, PRs, releases
+└── roadmap.md             ← build order & status
 ```
 
-## Deployment
+## 🚦 Engineering discipline
 
-When you're ready to deploy your NestJS application to production, there are some key steps you can take to ensure it runs as efficiently as possible. Check out the [deployment documentation](https://docs.nestjs.com/deployment) for more information.
+- **TypeScript strict, zero `any`** — enforced by lint, not convention
+- **220+ unit tests** plus integration & contract suites; coverage thresholds gate CI
+- **Conventional Commits** → automated semantic releases & changelog
+- **CI pipeline**: lint → typecheck → tests + coverage → migration-drift check → CodeQL → Docker build
+- **Continuous deployment**: every push to `main` builds two images (bot + dashboard), publishes them to GHCR, and rolls the production stack forward — migrations first, health-gated restart after
+- **Prisma migrations** are append-only and verified against the schema on every CI run
 
-If you are looking for a cloud-based platform to deploy your NestJS application, check out [Mau](https://mau.nestjs.com), our official platform for deploying NestJS applications on AWS. Mau makes deployment straightforward and fast, requiring just a few simple steps:
+## 🗺️ Roadmap
 
-```bash
-$ npm install -g @nestjs/mau
-$ mau deploy
-```
+| Phase | Scope | Status |
+|---|---|---|
+| 1 — Infrastructure | Core kernel, database, cache, CI/CD | ✅ |
+| 2 — Core platform | i18n, permissions, event bus, security, plugins, testing | ✅ |
+| 3 — API & Dashboard | REST API + visual dashboard (OAuth, panels, realtime) | ✅ |
+| 4 — Foundational modules | Scheduler ✅ · Storage ✅ · Audit · Metrics · Notifications · Webhooks | 🔨 in progress |
+| 5 — Feature modules | Moderation, tickets, levels, economy, giveaways, games, logs, utilities, analytics, backups, AI, FiveM | 📋 specified |
+| 6 — Production hardening | Grafana dashboards, load testing, security review | 📋 planned |
 
-With Mau, you can deploy your application in just a few clicks, allowing you to focus on building features rather than managing infrastructure.
+Each Phase-5 module already has a complete spec in [`docs/modules/`](docs/modules/) — implementation follows the same blueprint proven by Scheduler and Storage.
 
-## Resources
+## 🧰 Stack
 
-Check out a few resources that may come in handy when working with NestJS:
+`TypeScript` · `NestJS` · `Necord / discord.js` · `Prisma 7` · `MariaDB` · `Redis` · `BullMQ` · `Next.js 15` · `Zod` · `Vitest` · `Playwright` · `Docker` · `GitHub Actions` · `Prometheus / OpenTelemetry`
 
-- Visit the [NestJS Documentation](https://docs.nestjs.com) to learn more about the framework.
-- For questions and support, please visit our [Discord channel](https://discord.gg/G7Qnnhy).
-- To dive deeper and get more hands-on experience, check out our official video [courses](https://courses.nestjs.com/).
-- Deploy your application to AWS with the help of [NestJS Mau](https://mau.nestjs.com) in just a few clicks.
-- Visualize your application graph and interact with the NestJS application in real-time using [NestJS Devtools](https://devtools.nestjs.com).
-- Need help with your project (part-time to full-time)? Check out our official [enterprise support](https://enterprise.nestjs.com).
-- To stay in the loop and get updates, follow us on [X](https://x.com/nestframework) and [LinkedIn](https://linkedin.com/company/nestjs).
-- Looking for a job, or have a job to offer? Check out our official [Jobs board](https://jobs.nestjs.com).
+---
 
-## Support
-
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
-
-## Stay in touch
-
-- Author - [Kamil Myśliwiec](https://twitter.com/kammysliwiec)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
-
-## License
-
-Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).
+<p align="center"><sub>Built with a simple philosophy: <em>the goal is not to create another Discord bot — the goal is to build a platform.</em></sub></p>
