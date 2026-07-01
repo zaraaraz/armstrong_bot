@@ -1,3 +1,10 @@
+# [1.5.0](https://github.com/zaraaraz/armstrong_bot/compare/v1.4.3...v1.5.0) (2026-07-01)
+
+
+### Features
+
+* **dashboard:** build visual frontend + ship it in the deploy pipeline ([9dc1957](https://github.com/zaraaraz/armstrong_bot/commit/9dc19574861459f15aa6f54887cb52319533c9d1))
+
 ## [1.4.3](https://github.com/zaraaraz/armstrong_bot/compare/v1.4.2...v1.4.3) (2026-07-01)
 
 
