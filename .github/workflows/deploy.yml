@@ -43,7 +43,7 @@ jobs:
             type=raw,value=latest
             type=sha,format=long
 
-      - name: Build & push
+      - name: Build & push (backend)
         uses: docker/build-push-action@v6
         with:
           context: .
@@ -53,6 +53,26 @@ jobs:
           labels: ${{ steps.meta.outputs.labels }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
+
+      - name: Dashboard image metadata
+        id: dashmeta
+        uses: docker/metadata-action@v5
+        with:
+          images: ghcr.io/${{ github.repository }}-dashboard
+          tags: |
+            type=raw,value=latest
+            type=sha,format=long
+
+      - name: Build & push (dashboard frontend)
+        uses: docker/build-push-action@v6
+        with:
+          context: src/dashboard/frontend
+          file: src/dashboard/frontend/Dockerfile
+          push: true
+          tags: ${{ steps.dashmeta.outputs.tags }}
+          labels: ${{ steps.dashmeta.outputs.labels }}
+          cache-from: type=gha,scope=dashboard
+          cache-to: type=gha,mode=max,scope=dashboard
 
   deploy:
     name: Deploy to server
@@ -85,6 +105,7 @@ jobs:
             # Merge compose vars (.deploy.env) so DB_PASSWORD / APP_IMAGE resolve.
             set -a; . ./.deploy.env; set +a
             export APP_IMAGE="ghcr.io/${{ github.repository }}:sha-${{ github.sha }}"
+            export DASHBOARD_IMAGE="ghcr.io/${{ github.repository }}-dashboard:sha-${{ github.sha }}"
             docker compose -f docker-compose.prod.yml --env-file .deploy.env pull
             # Stop the previous stack first so fixed container_names never clash
             # with leftovers. Volumes (data) are preserved across down/up.

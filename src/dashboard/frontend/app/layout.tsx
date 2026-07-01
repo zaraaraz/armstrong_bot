@@ -12,7 +12,17 @@ export default function RootLayout({
 }): ReactNode {
   return (
     <html lang="pt">
-      <body>{children}</body>
+      <body
+        style={{
+          margin: 0,
+          fontFamily:
+            'system-ui, -apple-system, "Segoe UI", Roboto, sans-serif',
+          background: '#f9fafb',
+          color: '#111827',
+        }}
+      >
+        {children}
+      </body>
     </html>
   );
 }
