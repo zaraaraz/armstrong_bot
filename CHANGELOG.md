@@ -1,3 +1,10 @@
+## [1.4.2](https://github.com/zaraaraz/armstrong_bot/compare/v1.4.1...v1.4.2) (2026-07-01)
+
+
+### Bug Fixes
+
+* **ci:** make deploy idempotent — compose down before up ([114cc5f](https://github.com/zaraaraz/armstrong_bot/commit/114cc5ff346dd58440426c156bcbed576591f9fa))
+
 ## [1.4.1](https://github.com/zaraaraz/armstrong_bot/compare/v1.4.0...v1.4.1) (2026-07-01)
 
 
