@@ -59,6 +59,9 @@ jobs:
     needs: build-and-push
     runs-on: ubuntu-latest
     steps:
+      # Needed so the compose file exists in the workspace for scp-action.
+      - uses: actions/checkout@v4
+
       - name: Copy compose file to server
         uses: appleboy/scp-action@v0.1.7
         with:
