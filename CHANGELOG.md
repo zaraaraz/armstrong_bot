@@ -1,3 +1,10 @@
+# [1.8.0](https://github.com/zaraaraz/armstrong_bot/compare/v1.7.1...v1.8.0) (2026-07-01)
+
+
+### Features
+
+* **dashboard:** redesign the guild selector ([e12d6cc](https://github.com/zaraaraz/armstrong_bot/commit/e12d6cc563978df929c93e42af44b8df450943d0))
+
 ## [1.7.1](https://github.com/zaraaraz/armstrong_bot/compare/v1.7.0...v1.7.1) (2026-07-01)
 
 
