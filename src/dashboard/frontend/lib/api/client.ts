@@ -149,14 +149,95 @@ export const scheduler = {
     }),
 };
 
+// ─── Dashboard resource types (mirror backend/interfaces) ──────────────────
+
+export interface GuildOverview {
+  guildId: string;
+  modules: { total: number };
+  recentActivity: Array<{
+    action: string;
+    actorId: string;
+    target: string | null;
+    at: string;
+  }>;
+}
+
+export interface DashboardApiKeyView {
+  id: string;
+  guildId: string;
+  name: string;
+  prefix: string;
+  scopes: string[];
+  lastUsedAt: string | null;
+  expiresAt: string | null;
+  revokedAt: string | null;
+  createdAt: string;
+}
+
+export interface CreatedDashboardApiKey extends DashboardApiKeyView {
+  /** Raw key — shown exactly once, never returned again. */
+  plaintext: string;
+}
+
+export interface BackupView {
+  id: string;
+  guildId: string;
+  status: string;
+  jobId: string | null;
+  sizeBytes: number | null;
+  error: string | null;
+  createdAt: string;
+  completedAt: string | null;
+}
+
+function pageQuery(page?: number, pageSize?: number): string {
+  const q = new URLSearchParams();
+  if (page) q.set('page', String(page));
+  if (pageSize) q.set('pageSize', String(pageSize));
+  const s = q.toString();
+  return s ? `?${s}` : '';
+}
+
 export const api = {
   me: () => request<DashboardUser>('/api/dashboard/auth/me'),
   logout: () => request<void>('/api/dashboard/auth/logout', { method: 'POST' }),
   guilds: () => request<ManageableGuild[]>('/api/dashboard/guilds'),
+
   overview: (guildId: string) =>
-    request<unknown>(`/api/dashboard/guilds/${guildId}/overview`),
-  apiKeys: (guildId: string) =>
-    request<Paginated<unknown>>(`/api/dashboard/guilds/${guildId}/api-keys`),
+    request<GuildOverview>(`/api/dashboard/guilds/${guildId}/overview`),
+
+  apiKeys: {
+    list: (guildId: string, page = 1, pageSize = 50) =>
+      request<Paginated<DashboardApiKeyView>>(
+        `/api/dashboard/guilds/${guildId}/api-keys${pageQuery(page, pageSize)}`,
+      ),
+    create: (
+      guildId: string,
+      body: { name: string; scopes: string[]; expiresAt?: string | null },
+    ) =>
+      request<CreatedDashboardApiKey>(
+        `/api/dashboard/guilds/${guildId}/api-keys`,
+        { method: 'POST', body: JSON.stringify(body) },
+      ),
+    revoke: (guildId: string, id: string) =>
+      request<void>(`/api/dashboard/guilds/${guildId}/api-keys/${id}`, {
+        method: 'DELETE',
+      }),
+  },
+
+  backups: {
+    list: (guildId: string, page = 1, pageSize = 50) =>
+      request<Paginated<BackupView>>(
+        `/api/dashboard/guilds/${guildId}/backups${pageQuery(page, pageSize)}`,
+      ),
+    request: (guildId: string) =>
+      request<BackupView>(`/api/dashboard/guilds/${guildId}/backups`, {
+        method: 'POST',
+      }),
+    get: (guildId: string, id: string) =>
+      request<BackupView>(`/api/dashboard/guilds/${guildId}/backups/${id}`),
+  },
+
   realtimeTicket: () =>
     request<{ ticket: string }>('/api/dashboard/realtime/ticket'),
   scheduler,

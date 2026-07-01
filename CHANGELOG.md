@@ -1,3 +1,17 @@
+# [1.5.0](https://github.com/zaraaraz/armstrong_bot/compare/v1.4.3...v1.5.0) (2026-07-01)
+
+
+### Features
+
+* **dashboard:** build visual frontend + ship it in the deploy pipeline ([9dc1957](https://github.com/zaraaraz/armstrong_bot/commit/9dc19574861459f15aa6f54887cb52319533c9d1))
+
+## [1.4.3](https://github.com/zaraaraz/armstrong_bot/compare/v1.4.2...v1.4.3) (2026-07-01)
+
+
+### Bug Fixes
+
+* **config:** parse boolean env vars correctly (session.secure) ([26554c4](https://github.com/zaraaraz/armstrong_bot/commit/26554c449f9c2e37a4e623b7459f5416d7693428))
+
 ## [1.4.2](https://github.com/zaraaraz/armstrong_bot/compare/v1.4.1...v1.4.2) (2026-07-01)
 
 

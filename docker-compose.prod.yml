@@ -46,6 +46,21 @@ services:
       retries: 3
       start_period: 30s
 
+  # Next.js dashboard frontend. Separate image; proxies /api/dashboard + /realtime
+  # to the backend over the internal network.
+  dashboard:
+    image: ${DASHBOARD_IMAGE:-ghcr.io/zaraaraz/armstrong_bot-dashboard:latest}
+    container_name: armstrong-dashboard
+    restart: unless-stopped
+    environment:
+      NODE_ENV: production
+      BACKEND_ORIGIN: http://app:3000
+    ports:
+      - '127.0.0.1:5173:5173'
+    depends_on:
+      app:
+        condition: service_started
+
   mariadb:
     image: mariadb:11.4
     container_name: armstrong-mariadb
