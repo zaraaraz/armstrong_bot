@@ -1,3 +1,10 @@
+## [1.5.2](https://github.com/zaraaraz/armstrong_bot/compare/v1.5.1...v1.5.2) (2026-07-01)
+
+
+### Bug Fixes
+
+* **config:** parse boolean env vars correctly (session.secure) ([66e4a08](https://github.com/zaraaraz/armstrong_bot/commit/66e4a08ef7d06c151857c840e36981b2f80ca3a6))
+
 ## [1.5.1](https://github.com/zaraaraz/armstrong_bot/compare/v1.5.0...v1.5.1) (2026-07-01)
 
 
