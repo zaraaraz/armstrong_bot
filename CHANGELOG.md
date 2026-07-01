@@ -1,3 +1,10 @@
+## [1.4.1](https://github.com/zaraaraz/armstrong_bot/compare/v1.4.0...v1.4.1) (2026-07-01)
+
+
+### Bug Fixes
+
+* **ci:** checkout repo in deploy job so scp finds compose file ([1367abe](https://github.com/zaraaraz/armstrong_bot/commit/1367abee83b935083ba65989cdb8b29a00ba4723))
+
 # [1.4.0](https://github.com/zaraaraz/armstrong_bot/compare/v1.3.0...v1.4.0) (2026-07-01)
 
 
