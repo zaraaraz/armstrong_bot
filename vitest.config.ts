@@ -67,6 +67,14 @@ export default defineConfig({
         'src/modules/scheduler/application/scheduler-health.state.ts',
         'src/modules/scheduler/application/scheduler-query.service.ts',
         'src/modules/scheduler/config/scheduler-config.service.ts',
+        // Storage (Phase 4, item 14): drivers wrap the filesystem / future S3
+        // SDK, the emitter is a thin EventBus bridge, and the config service
+        // needs live Prisma+Redis — integration-suite surfaces, mirroring the
+        // scheduler exclusions above. Domain + application logic IS unit-covered.
+        'src/modules/storage/infrastructure/drivers/**',
+        'src/modules/storage/observability/**',
+        'src/modules/storage/application/storage-event.emitter.ts',
+        'src/modules/storage/config/storage-config.service.ts',
       ],
     },
   },

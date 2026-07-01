@@ -30,6 +30,10 @@ services:
       DATABASE_URL: mysql://armstrong:${DB_PASSWORD}@mariadb:3306/armstrong_bot
       REDIS_HOST: redis
       REDIS_PORT: 6379
+      # Storage module: local driver writes into a named volume.
+      STORAGE_LOCAL_ROOT: /data/storage
+    volumes:
+      - armstrong_storage:/data/storage
     ports:
       - '127.0.0.1:3000:3000'
     depends_on:
@@ -90,3 +94,4 @@ services:
 volumes:
   armstrong_db:
   armstrong_redis:
+  armstrong_storage:
