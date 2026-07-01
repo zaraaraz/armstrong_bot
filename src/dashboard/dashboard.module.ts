@@ -16,6 +16,7 @@ import {
   DashboardAuditRepository,
   PrismaDashboardAuditRepository,
 } from './backend/repositories/audit.repository';
+import { BotGuildsRepository } from './backend/repositories/bot-guilds.repository';
 // Services
 import { DashboardOAuthService } from './backend/services/discord-oauth.service';
 import { DashboardSessionService } from './backend/services/session.service';
@@ -64,6 +65,7 @@ import { RealtimeController } from './backend/controllers/realtime.controller';
       provide: DashboardAuditRepository,
       useClass: PrismaDashboardAuditRepository,
     },
+    BotGuildsRepository,
     // Services
     DashboardOAuthService,
     DashboardSessionService,

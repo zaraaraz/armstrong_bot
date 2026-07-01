@@ -2,12 +2,14 @@ import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { DashboardOAuthService } from './discord-oauth.service';
 import { DashboardSessionService } from './session.service';
+import { BotGuildsRepository } from '../repositories/bot-guilds.repository';
 import type { DashboardUser } from '../interfaces/dashboard.interfaces';
 
 /**
  * Orchestrates the dashboard login flow: build the authorize URL, exchange the
- * code, and create the session. Bot owner / bot-presence sets are sourced from
- * config (the gateway/registry will supply live guild ids in a later phase).
+ * code, and create the session. Bot presence now comes live from the gateway's
+ * guild registry (DB); the BOT_GUILD_IDS env var remains as a manual override
+ * that is unioned in (useful for testing without the gateway).
  */
 @Injectable()
 export class DashboardAuthService {
@@ -15,6 +17,7 @@ export class DashboardAuthService {
     private readonly oauth: DashboardOAuthService,
     private readonly sessions: DashboardSessionService,
     private readonly configService: ConfigService,
+    private readonly botGuilds: BotGuildsRepository,
   ) {}
 
   buildAuthorizeUrl(): { url: string; state: string } {
@@ -27,7 +30,7 @@ export class DashboardAuthService {
     const result = await this.oauth.exchangeCode(
       code,
       this.botOwnerIds(),
-      this.botGuildIds(),
+      await this.botGuildIds(),
     );
     const sessionId = await this.sessions.create(
       result.user,
@@ -47,8 +50,12 @@ export class DashboardAuthService {
     );
   }
 
-  private botGuildIds(): ReadonlySet<string> {
-    return this.splitSet(this.configService.get<string>('BOT_GUILD_IDS'));
+  private async botGuildIds(): Promise<ReadonlySet<string>> {
+    const live = await this.botGuilds.activeDiscordIds();
+    const manual = this.splitSet(
+      this.configService.get<string>('BOT_GUILD_IDS'),
+    );
+    return new Set([...live, ...manual]);
   }
 
   private splitSet(raw: string | undefined): ReadonlySet<string> {
