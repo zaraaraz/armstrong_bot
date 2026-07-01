@@ -1,3 +1,10 @@
+## [1.5.1](https://github.com/zaraaraz/armstrong_bot/compare/v1.5.0...v1.5.1) (2026-07-01)
+
+
+### Bug Fixes
+
+* **dashboard:** redirect root path to the app instead of 404 ([044e53f](https://github.com/zaraaraz/armstrong_bot/commit/044e53f97b9a2ed01a23a9a6c7264c03d7d5e623))
+
 # [1.5.0](https://github.com/zaraaraz/armstrong_bot/compare/v1.4.3...v1.5.0) (2026-07-01)
 
 
