@@ -1,3 +1,16 @@
+# [1.4.0](https://github.com/zaraaraz/armstrong_bot/compare/v1.3.0...v1.4.0) (2026-07-01)
+
+
+### Bug Fixes
+
+* **deploy:** make the app production-runnable + add auto-deploy pipeline ([a49f46a](https://github.com/zaraaraz/armstrong_bot/commit/a49f46accd62cb21cb947b106a0c9ad878ed32ec))
+* **roadmap:** remove status indication for Scheduler item ([d8285ef](https://github.com/zaraaraz/armstrong_bot/commit/d8285ef006f9954438c21a0499e58424df1261da))
+
+
+### Features
+
+* **scheduler:** implement Scheduler module (item 13) ([72d0bd3](https://github.com/zaraaraz/armstrong_bot/commit/72d0bd30247950e67a2dc628add48e94ff3a2552))
+
 # [1.3.0](https://github.com/zaraaraz/armstrong_bot/compare/v1.2.0...v1.3.0) (2026-06-30)
 
 
