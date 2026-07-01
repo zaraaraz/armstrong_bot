@@ -1,3 +1,10 @@
+# [1.7.0](https://github.com/zaraaraz/armstrong_bot/compare/v1.6.0...v1.7.0) (2026-07-01)
+
+
+### Features
+
+* **storage:** implement Storage module (Phase 4, item 14) ([19056e1](https://github.com/zaraaraz/armstrong_bot/commit/19056e17db15d23275343c72b2af83c7669fe60a))
+
 # [1.6.0](https://github.com/zaraaraz/armstrong_bot/compare/v1.5.2...v1.6.0) (2026-07-01)
 
 
