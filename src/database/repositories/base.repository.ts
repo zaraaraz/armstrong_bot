@@ -1,4 +1,4 @@
-import type { PrismaService } from '../prisma.service';
+import { PrismaService } from '../prisma.service';
 import type { FindOptions, PageQuery, PaginatedResult } from './base.types';
 import type { RepositoryContext } from '../transactions/transaction.context';
 

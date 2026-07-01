@@ -29,7 +29,7 @@
 ## Phase 3 — API & Dashboard
 **Branch: `feature/api-dashboard`**
 
-| Order | Item | Spec | Status |
+| Order | Item | Spec |
 |---|---|---|---|
 | 11 | API | [architecture/08-api.md](architecture/08-api.md) |
 | 12 | Dashboard | [architecture/09-dashboard.md](architecture/09-dashboard.md) |
@@ -37,14 +37,14 @@
 ## Phase 4 — Foundational Modules
 **Branch: `feature/core-modules`**
 
-| Order | Item | Spec | Status |
+| Order | Item | Spec |
 |---|---|---|---|
 | 13 | Scheduler | [modules/scheduler.md](modules/scheduler.md) |
-| 14 | Storage | [modules/storage.md](modules/storage.md) | |
-| 15 | Audit | [modules/audit.md](modules/audit.md) | |
-| 16 | Metrics | [modules/metrics.md](modules/metrics.md) | |
-| 17 | Notifications | [modules/notifications.md](modules/notifications.md) | |
-| 18 | Webhooks | [modules/webhooks.md](modules/webhooks.md) | |
+| 14 | Storage | [modules/storage.md](modules/storage.md) |
+| 15 | Audit | [modules/audit.md](modules/audit.md) |
+| 16 | Metrics | [modules/metrics.md](modules/metrics.md) |
+| 17 | Notifications | [modules/notifications.md](modules/notifications.md) |
+| 18 | Webhooks | [modules/webhooks.md](modules/webhooks.md) |
 
 ## Phase 5 — Feature Modules
 **Branch: `feature/modules`**

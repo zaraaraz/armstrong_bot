@@ -1,5 +1,5 @@
 import { Injectable, Logger } from '@nestjs/common';
-import type { Redis } from 'ioredis';
+import { Redis } from 'ioredis';
 import type { CacheEntry } from '../interfaces/cache-entry.interface';
 import type { ICacheStore } from '../interfaces/cache-store.interface';
 

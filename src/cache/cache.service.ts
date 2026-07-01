@@ -4,9 +4,11 @@ import type {
   CacheGetOrSetOptions,
   CacheSetOptions,
 } from './interfaces/cache-options.interface';
-import type { MemoryCacheStore } from './stores/memory-cache.store';
-import type { RedisCacheStore } from './stores/redis-cache.store';
-import type { CacheKeyBuilder } from './keys/cache-key.builder';
+// These are injected via the constructor, so they must be value imports —
+// `import type` would erase the DI metadata Nest relies on.
+import { MemoryCacheStore } from './stores/memory-cache.store';
+import { RedisCacheStore } from './stores/redis-cache.store';
+import { CacheKeyBuilder } from './keys/cache-key.builder';
 
 @Injectable()
 export class CacheService {

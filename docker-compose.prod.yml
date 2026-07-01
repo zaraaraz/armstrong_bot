@@ -1,0 +1,77 @@
+# Production stack for the Ghost/Armstrong bot.
+# The app image is built + pushed to GHCR by CI; the server only pulls it.
+# DB + Redis are dedicated to the bot (isolated from other sites on the host).
+# All ports bind to 127.0.0.1 — nothing is exposed to the internet directly;
+# a reverse proxy (nginx) fronts the app when a domain is attached.
+
+services:
+  # Runs pending Prisma migrations, then exits. The app waits for this to
+  # finish successfully before starting, so the schema is always current.
+  migrate:
+    image: ${APP_IMAGE:-ghcr.io/zaraaraz/armstrong_bot:latest}
+    container_name: armstrong-migrate
+    restart: 'no'
+    env_file: .env
+    environment:
+      DATABASE_URL: mysql://armstrong:${DB_PASSWORD}@mariadb:3306/armstrong_bot
+    command: ['npx', 'prisma', 'migrate', 'deploy']
+    depends_on:
+      mariadb:
+        condition: service_healthy
+
+  app:
+    image: ${APP_IMAGE:-ghcr.io/zaraaraz/armstrong_bot:latest}
+    container_name: armstrong-app
+    restart: unless-stopped
+    env_file: .env
+    environment:
+      NODE_ENV: production
+      HTTP_PORT: 3000
+      DATABASE_URL: mysql://armstrong:${DB_PASSWORD}@mariadb:3306/armstrong_bot
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+    ports:
+      - '127.0.0.1:3000:3000'
+    depends_on:
+      mariadb:
+        condition: service_healthy
+      redis:
+        condition: service_started
+      migrate:
+        condition: service_completed_successfully
+    healthcheck:
+      test: ['CMD', 'node', '-e', "require('http').get('http://localhost:3000/health', r => process.exit(r.statusCode === 200 ? 0 : 1)).on('error', () => process.exit(1))"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 30s
+
+  mariadb:
+    image: mariadb:11.4
+    container_name: armstrong-mariadb
+    restart: unless-stopped
+    environment:
+      MARIADB_ROOT_PASSWORD: ${DB_ROOT_PASSWORD}
+      MARIADB_DATABASE: armstrong_bot
+      MARIADB_USER: armstrong
+      MARIADB_PASSWORD: ${DB_PASSWORD}
+    command: --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
+    volumes:
+      - armstrong_db:/var/lib/mysql
+    healthcheck:
+      test: ['CMD', 'healthcheck.sh', '--connect', '--innodb_initialized']
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+  redis:
+    image: redis:7-alpine
+    container_name: armstrong-redis
+    restart: unless-stopped
+    command: redis-server --appendonly yes
+    volumes:
+      - armstrong_redis:/data
+
+volumes:
+  armstrong_db:
+  armstrong_redis:

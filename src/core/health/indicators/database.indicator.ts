@@ -3,7 +3,7 @@ import type {
   HealthContributor,
   HealthCheckResult,
 } from '../health-contributor';
-import type { PrismaService } from '../../../database/prisma.service';
+import { PrismaService } from '../../../database/prisma.service';
 
 @Injectable()
 export class DatabaseHealthIndicator implements HealthContributor {

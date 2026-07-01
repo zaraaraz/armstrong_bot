@@ -5,6 +5,7 @@ import {
   OnModuleInit,
 } from '@nestjs/common';
 import { PrismaClient } from '@prisma/client';
+import { PrismaMariaDb } from '@prisma/adapter-mariadb';
 
 @Injectable()
 export class PrismaService
@@ -12,6 +13,17 @@ export class PrismaService
   implements OnModuleInit, OnModuleDestroy
 {
   private readonly logger = new Logger(PrismaService.name);
+
+  constructor() {
+    // Prisma 7 connects through a driver adapter rather than an implicit
+    // DATABASE_URL. The running app must construct the adapter explicitly
+    // (the prisma.config.ts path only applies to the Prisma CLI).
+    const url = process.env['DATABASE_URL'];
+    if (!url) {
+      throw new Error('DATABASE_URL is not set');
+    }
+    super({ adapter: new PrismaMariaDb(url) });
+  }
 
   async onModuleInit(): Promise<void> {
     await this.$connect();
