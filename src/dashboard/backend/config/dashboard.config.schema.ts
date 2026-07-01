@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { envBoolean } from '../../../shared/config/env-boolean';
 
 /** Global (ENV-sourced) dashboard configuration. */
 export const dashboardGlobalConfigSchema = z.object({
@@ -18,7 +19,7 @@ export const dashboardGlobalConfigSchema = z.object({
       .default(60 * 60 * 12), // 12h
     cookieName: z.string().default('ghost_dash_sid'),
     sameSite: z.enum(['lax', 'strict', 'none']).default('lax'),
-    secure: z.coerce.boolean().default(true),
+    secure: envBoolean(true),
   }),
   realtime: z.object({
     ticketTtlSeconds: z.coerce.number().int().positive().default(30),
