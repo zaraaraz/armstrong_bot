@@ -1,3 +1,10 @@
+# [1.13.0](https://github.com/zaraaraz/armstrong_bot/compare/v1.12.0...v1.13.0) (2026-07-02)
+
+
+### Features
+
+* **cache:** add MemoryCacheStore to exports in CacheModule ([237cd7d](https://github.com/zaraaraz/armstrong_bot/commit/237cd7d2be36080f664189aefd7444d77767d7c7))
+
 # [1.12.0](https://github.com/zaraaraz/armstrong_bot/compare/v1.11.0...v1.12.0) (2026-07-02)
 
 
