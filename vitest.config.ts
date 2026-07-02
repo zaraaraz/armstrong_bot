@@ -88,6 +88,47 @@ export default defineConfig({
         'src/modules/audit/events/audit-event.emitter.ts',
         'src/modules/audit/events/audit-event.consumer.ts',
         'src/modules/audit/config/audit-config.service.ts',
+        // Metrics (Phase 4, item 16): the BullMQ producer/worker need a live
+        // Redis, the OTel/tracing adapter and the prom-client default-registry
+        // collector are exercised only with a running process, the snapshot
+        // service/writer + config service need live Prisma+Redis, and the event
+        // emitter/consumer are thin EventBus bridges — all integration-suite
+        // surfaces, mirroring the scheduler/storage/audit exclusions above. The
+        // domain (threshold, metric-definition, cidr), the recording facade,
+        // the snapshot builder, the scrape guard and the config parser ARE
+        // unit-covered.
+        'src/modules/metrics/infrastructure/metrics.queue.ts',
+        'src/modules/metrics/infrastructure/metrics.registry.ts',
+        'src/modules/metrics/infrastructure/prisma-metrics.extension.ts',
+        'src/modules/metrics/jobs/**',
+        'src/modules/metrics/tracing.ts',
+        'src/modules/metrics/application/system-collector.service.ts',
+        'src/modules/metrics/application/metrics-snapshot.service.ts',
+        'src/modules/metrics/application/metrics-snapshot.writer.ts',
+        'src/modules/metrics/config/metrics-config.service.ts',
+        'src/modules/metrics/events/metrics-event.emitter.ts',
+        'src/modules/metrics/events/metrics-event.consumer.ts',
+        // Notifications (Phase 4, item 17): same categories as above — the three
+        // BullMQ producers/workers need a live Redis, the transports reach
+        // Discord / HTTP / SMTP / web-push, the OTel/tracing + prom-client
+        // observability adapters need a running process, the routing/consumer
+        // and integration notifiers bridge the EventBus, and the config service
+        // needs live Prisma+Redis. The domain (template, preference-resolver,
+        // dedupe, value objects), the dispatch application service, the provider
+        // registry, the GitHub HMAC verifier and the config parser ARE
+        // unit-covered.
+        'src/modules/notifications/jobs/**',
+        'src/modules/notifications/providers/discord.provider.ts',
+        'src/modules/notifications/providers/webhook.provider.ts',
+        'src/modules/notifications/providers/email.provider.ts',
+        'src/modules/notifications/providers/push.provider.ts',
+        'src/modules/notifications/observability/**',
+        'src/modules/notifications/config/notifications-config.service.ts',
+        'src/modules/notifications/application/notification-routing.service.ts',
+        'src/modules/notifications/application/integration/twitch-notifier.service.ts',
+        'src/modules/notifications/application/integration/youtube-notifier.service.ts',
+        'src/modules/notifications/events/notification-event.emitter.ts',
+        'src/modules/notifications/events/consumers/**',
       ],
     },
   },

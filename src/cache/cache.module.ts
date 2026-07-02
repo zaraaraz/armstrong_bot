@@ -33,6 +33,6 @@ const REDIS_CLIENT = 'REDIS_CLIENT';
     CacheKeyBuilder,
     CacheService,
   ],
-  exports: [CacheService, CacheKeyBuilder, REDIS_CLIENT],
+  exports: [CacheService, CacheKeyBuilder, MemoryCacheStore, REDIS_CLIENT],
 })
 export class CacheModule {}
