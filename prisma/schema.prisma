@@ -10,16 +10,16 @@ datasource db {
 
 /// A Discord guild (server). Root of all guild-scoped data.
 model Guild {
-  id          String    @id @default(cuid())
-  discordId   String    @unique @map("discord_id") @db.VarChar(20)
-  name        String    @db.VarChar(100)
-  iconHash    String?   @map("icon_hash") @db.VarChar(64)
-  ownerId     String    @map("owner_id") @db.VarChar(20)
-  locale      String    @default("pt") @db.VarChar(10)
-  active      Boolean   @default(true)
-  createdAt   DateTime  @default(now()) @map("created_at")
-  updatedAt   DateTime  @updatedAt @map("updated_at")
-  deletedAt   DateTime? @map("deleted_at")
+  id        String    @id @default(cuid())
+  discordId String    @unique @map("discord_id") @db.VarChar(20)
+  name      String    @db.VarChar(100)
+  iconHash  String?   @map("icon_hash") @db.VarChar(64)
+  ownerId   String    @map("owner_id") @db.VarChar(20)
+  locale    String    @default("pt") @db.VarChar(10)
+  active    Boolean   @default(true)
+  createdAt DateTime  @default(now()) @map("created_at")
+  updatedAt DateTime  @updatedAt @map("updated_at")
+  deletedAt DateTime? @map("deleted_at")
 
   config       GuildConfig?
   members      GuildMember[]
@@ -331,19 +331,19 @@ model EventLog {
 
 /// Dead-letter queue: envelopes whose handlers exhausted all retry attempts.
 model EventDeadLetter {
-  id          String    @id @default(uuid())
-  envelopeId  String    @map("envelope_id") @db.VarChar(64)
-  eventName   String    @map("event_name") @db.VarChar(128)
-  guildId     String?   @map("guild_id") @db.VarChar(20)
-  handlerId   String    @map("handler_id") @db.VarChar(128)
-  payload     Json
-  attempts    Int
-  lastError   String    @map("last_error") @db.Text
-  errorCode   String    @map("error_code") @db.VarChar(64)
-  status      String    @default("pending") @db.VarChar(20)
-  createdAt   DateTime  @default(now()) @map("created_at")
-  replayedAt  DateTime? @map("replayed_at")
-  deletedAt   DateTime? @map("deleted_at")
+  id         String    @id @default(uuid())
+  envelopeId String    @map("envelope_id") @db.VarChar(64)
+  eventName  String    @map("event_name") @db.VarChar(128)
+  guildId    String?   @map("guild_id") @db.VarChar(20)
+  handlerId  String    @map("handler_id") @db.VarChar(128)
+  payload    Json
+  attempts   Int
+  lastError  String    @map("last_error") @db.Text
+  errorCode  String    @map("error_code") @db.VarChar(64)
+  status     String    @default("pending") @db.VarChar(20)
+  createdAt  DateTime  @default(now()) @map("created_at")
+  replayedAt DateTime? @map("replayed_at")
+  deletedAt  DateTime? @map("deleted_at")
 
   eventLog EventLog? @relation(fields: [envelopeId], references: [envelopeId])
 
@@ -440,11 +440,11 @@ model PluginEnablement {
 
 /// Per-plugin, per-guild (or global) configuration blob.
 model PluginConfig {
-  id        String    @id @default(cuid())
-  pluginId  String    @map("plugin_id")
-  guildId   String?   @map("guild_id") @db.VarChar(20)
+  id        String   @id @default(cuid())
+  pluginId  String   @map("plugin_id")
+  guildId   String?  @map("guild_id") @db.VarChar(20)
   values    Json
-  updatedAt DateTime  @updatedAt @map("updated_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
 
   plugin Plugin @relation(fields: [pluginId], references: [id], onDelete: Cascade)
 
@@ -455,12 +455,12 @@ model PluginConfig {
 
 /// Immutable record of every version change for a plugin.
 model PluginVersionHistory {
-  id          String    @id @default(cuid())
-  pluginId    String    @map("plugin_id")
-  fromVersion String?   @map("from_version") @db.VarChar(32)
-  toVersion   String    @map("to_version") @db.VarChar(32)
-  actorId     String    @map("actor_id") @db.VarChar(20)
-  appliedAt   DateTime  @default(now()) @map("applied_at")
+  id          String   @id @default(cuid())
+  pluginId    String   @map("plugin_id")
+  fromVersion String?  @map("from_version") @db.VarChar(32)
+  toVersion   String   @map("to_version") @db.VarChar(32)
+  actorId     String   @map("actor_id") @db.VarChar(20)
+  appliedAt   DateTime @default(now()) @map("applied_at")
 
   plugin Plugin @relation(fields: [pluginId], references: [id], onDelete: Cascade)
 
@@ -486,18 +486,18 @@ enum PluginStatus {
 
 /// Optional CI/test telemetry — records suite outcomes per commit (guild-agnostic).
 model TestRun {
-  id               String     @id @default(cuid())
-  commitSha        String     @map("commit_sha") @db.VarChar(40)
-  branch           String     @db.VarChar(255)
+  id               String    @id @default(cuid())
+  commitSha        String    @map("commit_sha") @db.VarChar(40)
+  branch           String    @db.VarChar(255)
   suite            TestSuite
   passed           Int
   failed           Int
-  skipped          Int        @default(0)
-  durationMs       Int        @map("duration_ms")
-  coverageLines    Decimal?   @map("coverage_lines") @db.Decimal(5, 2)
-  coverageBranches Decimal?   @map("coverage_branches") @db.Decimal(5, 2)
-  createdAt        DateTime   @default(now()) @map("created_at")
-  deletedAt        DateTime?  @map("deleted_at")
+  skipped          Int       @default(0)
+  durationMs       Int       @map("duration_ms")
+  coverageLines    Decimal?  @map("coverage_lines") @db.Decimal(5, 2)
+  coverageBranches Decimal?  @map("coverage_branches") @db.Decimal(5, 2)
+  createdAt        DateTime  @default(now()) @map("created_at")
+  deletedAt        DateTime? @map("deleted_at")
 
   @@index([commitSha])
   @@index([branch, createdAt])
@@ -1026,19 +1026,19 @@ enum WebhookDeliveryStatus {
 /// public URL slug (`/webhooks/in/:token`). `signingSecret` holds AES-GCM
 /// CIPHERTEXT (never plaintext). `guildId` null => a global/system endpoint.
 model WebhookEndpoint {
-  id            String                   @id @default(cuid())
-  guildId       String?                  @map("guild_id") @db.VarChar(32)
+  id            String              @id @default(cuid())
+  guildId       String?             @map("guild_id") @db.VarChar(32)
   provider      WebhookProviderType
-  token         String                   @unique @db.VarChar(64)
-  signingSecret String                   @map("signing_secret") @db.Text
-  label         String                   @db.VarChar(191)
-  enabled       Boolean                  @default(true)
-  createdById   String                   @map("created_by_id") @db.VarChar(32)
-  createdAt     DateTime                 @default(now()) @map("created_at")
-  updatedAt     DateTime                 @updatedAt @map("updated_at")
-  deletedAt     DateTime?                @map("deleted_at")
+  token         String              @unique @db.VarChar(64)
+  signingSecret String              @map("signing_secret") @db.Text
+  label         String              @db.VarChar(191)
+  enabled       Boolean             @default(true)
+  createdById   String              @map("created_by_id") @db.VarChar(32)
+  createdAt     DateTime            @default(now()) @map("created_at")
+  updatedAt     DateTime            @updatedAt @map("updated_at")
+  deletedAt     DateTime?           @map("deleted_at")
 
-  deliveries    WebhookIngressDelivery[]
+  deliveries WebhookIngressDelivery[]
 
   @@index([guildId, provider])
   @@index([enabled])
@@ -1076,19 +1076,19 @@ model WebhookIngressDelivery {
 /// A guild's outbound subscription: forward a platform domain event to an
 /// external HTTPS target, HMAC-signed. `signingSecret` holds ciphertext.
 model WebhookSubscription {
-  id            String                     @id @default(cuid())
-  guildId       String                     @map("guild_id") @db.VarChar(32)
-  eventType     String                     @map("event_type") @db.VarChar(191)
-  targetUrl     String                     @map("target_url") @db.Text
-  signingSecret String                     @map("signing_secret") @db.Text
-  enabled       Boolean                    @default(true)
+  id            String    @id @default(cuid())
+  guildId       String    @map("guild_id") @db.VarChar(32)
+  eventType     String    @map("event_type") @db.VarChar(191)
+  targetUrl     String    @map("target_url") @db.Text
+  signingSecret String    @map("signing_secret") @db.Text
+  enabled       Boolean   @default(true)
   filter        Json?
-  createdById   String                     @map("created_by_id") @db.VarChar(32)
-  createdAt     DateTime                   @default(now()) @map("created_at")
-  updatedAt     DateTime                   @updatedAt @map("updated_at")
-  deletedAt     DateTime?                  @map("deleted_at")
+  createdById   String    @map("created_by_id") @db.VarChar(32)
+  createdAt     DateTime  @default(now()) @map("created_at")
+  updatedAt     DateTime  @updatedAt @map("updated_at")
+  deletedAt     DateTime? @map("deleted_at")
 
-  deliveries    WebhookOutboundDelivery[]
+  deliveries WebhookOutboundDelivery[]
 
   @@index([guildId, eventType, enabled])
   @@index([deletedAt])
@@ -1115,4 +1115,113 @@ model WebhookOutboundDelivery {
   @@index([guildId, eventType])
   @@index([createdAt])
   @@map("webhook_outbound_deliveries")
+}
+
+// ─── Logs (Phase 5, item 19) ────────────────────────────────────────────────
+
+/// Every log category the Logs module understands. Stable string values are
+/// persisted on LogRoute/LogAuditEntry. UPPERCASE per the audit/metrics/
+/// notifications convention (item 15/16/17).
+enum LogCategory {
+  MESSAGE_DELETE
+  MESSAGE_EDIT
+  VOICE
+  ROLE_UPDATE
+  NICKNAME
+  CHANNEL
+  MEMBER_JOIN
+  MEMBER_LEAVE
+  BAN
+  TIMEOUT
+  TICKET
+  COMMAND_USAGE
+  ERROR
+}
+
+/// Type of ignore rule matched against a normalised log event before dispatch.
+enum LogIgnoreType {
+  USER
+  ROLE
+  CHANNEL
+  COMMAND
+}
+
+/// Per-guild top-level logging configuration. Soft-deleted via `deletedAt`.
+/// `guildId` is a bare snowflake with NO Guild FK relation (codebase
+/// convention shared with audit/scheduler/storage/notifications).
+model LogConfig {
+  id                 String    @id @default(cuid())
+  guildId            String    @unique @map("guild_id") @db.VarChar(32)
+  enabled            Boolean   @default(true)
+  defaultChannelId   String?   @map("default_channel_id") @db.VarChar(32)
+  ignoreBots         Boolean   @default(true) @map("ignore_bots")
+  embedColorOverride Int?      @map("embed_color_override")
+  createdAt          DateTime  @default(now()) @map("created_at")
+  updatedAt          DateTime  @updatedAt @map("updated_at")
+  deletedAt          DateTime? @map("deleted_at")
+
+  routes  LogRoute[]
+  ignores LogIgnoreRule[]
+
+  @@index([guildId])
+  @@index([deletedAt])
+  @@map("log_configs")
+}
+
+/// Per-category routing + toggle for a guild. `channelId` null => fall back to
+/// LogConfig.defaultChannelId. Cascade-deleted with its parent config.
+model LogRoute {
+  id        String      @id @default(cuid())
+  guildId   String      @map("guild_id") @db.VarChar(32)
+  category  LogCategory
+  enabled   Boolean     @default(true)
+  channelId String?     @map("channel_id") @db.VarChar(32)
+  createdAt DateTime    @default(now()) @map("created_at")
+  updatedAt DateTime    @updatedAt @map("updated_at")
+
+  config LogConfig @relation(fields: [guildId], references: [guildId], onDelete: Cascade)
+
+  @@unique([guildId, category])
+  @@index([guildId])
+  @@index([guildId, category])
+  @@map("log_routes")
+}
+
+/// An ignore-list entry: suppresses events matching this user/role/channel/
+/// command. Cascade-deleted with its parent config.
+model LogIgnoreRule {
+  id        String        @id @default(cuid())
+  guildId   String        @map("guild_id") @db.VarChar(32)
+  type      LogIgnoreType
+  value     String        @db.VarChar(100)
+  createdAt DateTime      @default(now()) @map("created_at")
+
+  config LogConfig @relation(fields: [guildId], references: [guildId], onDelete: Cascade)
+
+  @@unique([guildId, type, value])
+  @@index([guildId, type])
+  @@map("log_ignore_rules")
+}
+
+/// Optional persisted audit trail of dispatched (or failed) log events. Hard-
+/// deleted by the retention job (`LOGS_AUDIT_RETENTION_DAYS`). `payload` holds
+/// the sanitised NormalizedLogEvent.
+model LogAuditEntry {
+  id            String      @id @default(cuid())
+  guildId       String      @map("guild_id") @db.VarChar(32)
+  category      LogCategory
+  actorId       String?     @map("actor_id") @db.VarChar(32)
+  targetId      String?     @map("target_id") @db.VarChar(32)
+  channelId     String?     @map("channel_id") @db.VarChar(32)
+  messageId     String?     @map("message_id") @db.VarChar(32)
+  correlationId String?     @map("correlation_id") @db.VarChar(191)
+  payload       Json
+  dispatched    Boolean     @default(false)
+  failureReason String?     @map("failure_reason") @db.Text
+  createdAt     DateTime    @default(now()) @map("created_at")
+
+  @@index([guildId, category])
+  @@index([guildId, createdAt])
+  @@index([correlationId])
+  @@map("log_audit_entries")
 }

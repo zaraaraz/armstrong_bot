@@ -142,6 +142,20 @@ export default defineConfig({
         'src/modules/webhooks/config/webhooks-config.service.ts',
         'src/modules/webhooks/events/webhook-event.emitter.ts',
         'src/modules/webhooks/events/consumers/**',
+        // Logs (Phase 5, item 19): same categories as the modules above — the
+        // two BullMQ producers/workers need a live Redis, the gateway listener
+        // + bus subscriber bridge Discord/EventBus, the dispatcher reaches the
+        // Discord client, the observability counters need a running process, and
+        // the config service needs live Prisma+Redis. The domain (event factory,
+        // colour map), the policy service, the formatter, the ingestion pipeline
+        // and the application service ARE unit-covered.
+        'src/modules/logs/jobs/**',
+        'src/modules/logs/observability/**',
+        'src/modules/logs/config/logs-config.service.ts',
+        'src/modules/logs/application/log-dispatcher.service.ts',
+        'src/modules/logs/events/logs-event.emitter.ts',
+        'src/modules/logs/infrastructure/log-gateway.listener.ts',
+        'src/modules/logs/infrastructure/log-event-bus.subscriber.ts',
       ],
     },
   },

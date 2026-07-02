@@ -23,8 +23,19 @@ import { GuildRegistryRepository } from './infrastructure/guild-registry.reposit
         GatewayIntentBits.GuildMembers,
         GatewayIntentBits.GuildMessages,
         GatewayIntentBits.MessageContent,
+        // Added for the Logs module (item 19): moderation (ban add/remove) and
+        // voice-state logging.
+        GatewayIntentBits.GuildModeration,
+        GatewayIntentBits.GuildVoiceStates,
       ],
-      partials: [Partials.Message, Partials.Channel],
+      partials: [
+        Partials.Message,
+        Partials.Channel,
+        // Uncached message edits/deletes and member updates arrive as partials;
+        // the Logs listeners tolerate nulls but these widen coverage.
+        Partials.GuildMember,
+        Partials.User,
+      ],
     }),
   ],
   providers: [PingCommand, BotGatewayListener, GuildRegistryRepository],
