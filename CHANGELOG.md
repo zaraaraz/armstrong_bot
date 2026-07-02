@@ -1,3 +1,10 @@
+# [1.14.0](https://github.com/zaraaraz/armstrong_bot/compare/v1.13.0...v1.14.0) (2026-07-02)
+
+
+### Features
+
+* **tests:** add DATABASE_URL setup in AppModule DI graph test ([76bfbc1](https://github.com/zaraaraz/armstrong_bot/commit/76bfbc1464e0aeae02b12c70be8bcc24dfa8cadc))
+
 # [1.13.0](https://github.com/zaraaraz/armstrong_bot/compare/v1.12.0...v1.13.0) (2026-07-02)
 
 
