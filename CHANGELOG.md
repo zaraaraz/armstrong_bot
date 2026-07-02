@@ -1,3 +1,11 @@
+# [1.10.0](https://github.com/zaraaraz/armstrong_bot/compare/v1.9.0...v1.10.0) (2026-07-02)
+
+
+### Features
+
+* **audit:** implement Audit module (Phase 4, item 15) ([fd2fb80](https://github.com/zaraaraz/armstrong_bot/commit/fd2fb80e2c8eaf03ac118b57c4ba41d3a70d7058))
+* **bot:** bring the bot online on Discord + dashboard invite links ([51a0ba8](https://github.com/zaraaraz/armstrong_bot/commit/51a0ba8fed0715f28da5812180605827bebbf700))
+
 # [1.9.0](https://github.com/zaraaraz/armstrong_bot/compare/v1.8.0...v1.9.0) (2026-07-02)
 
 
