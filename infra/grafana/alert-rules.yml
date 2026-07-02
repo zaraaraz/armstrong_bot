@@ -1,0 +1,48 @@
+# Prometheus recording + alert rules for Ghost Bot.
+# Load via `rule_files:` in prometheus.yml. Mirrors the Metrics module's default
+# thresholds; guild-scoped overrides are enforced in-app and emit
+# `metrics.threshold.breached` on the event bus.
+groups:
+  - name: ghost-bot-recording
+    interval: 30s
+    rules:
+      - record: ghost:http_request_duration_seconds:p95
+        expr: histogram_quantile(0.95, sum(rate(ghost_http_request_duration_seconds_bucket[5m])) by (le))
+      - record: ghost:http_error_ratio:5m
+        expr: sum(rate(ghost_http_requests_total{status_class="5xx"}[5m])) / clamp_min(sum(rate(ghost_http_requests_total[5m])), 1)
+      - record: ghost:gateway_latency_seconds:p99
+        expr: histogram_quantile(0.99, sum(rate(ghost_gateway_latency_seconds_bucket[5m])) by (le))
+
+  - name: ghost-bot-alerts
+    rules:
+      - alert: GhostEventLoopLagCritical
+        expr: ghost_event_loop_lag_seconds > 0.2
+        for: 2m
+        labels: { severity: critical }
+        annotations:
+          summary: 'Event-loop lag critical'
+          description: 'Event-loop lag {{ $value }}s exceeds 0.2s for 2m.'
+
+      - alert: GhostDlqNonEmpty
+        expr: ghost_queue_dlq_depth > 0
+        for: 5m
+        labels: { severity: warning }
+        annotations:
+          summary: 'Dead-letter queue non-empty ({{ $labels.queue }})'
+          description: '{{ $value }} job(s) in DLQ for queue {{ $labels.queue }}.'
+
+      - alert: GhostApiErrorRatioHigh
+        expr: ghost:http_error_ratio:5m > 0.05
+        for: 5m
+        labels: { severity: warning }
+        annotations:
+          summary: 'API 5xx error ratio above 5%'
+          description: '5xx ratio {{ $value | humanizePercentage }} over 5m.'
+
+      - alert: GhostGatewayHighLatency
+        expr: ghost:gateway_latency_seconds:p99 > 1
+        for: 5m
+        labels: { severity: warning }
+        annotations:
+          summary: 'Discord gateway p99 latency > 1s'
+          description: 'Gateway p99 latency {{ $value }}s over 5m.'

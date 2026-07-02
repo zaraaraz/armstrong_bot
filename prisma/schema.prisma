@@ -805,3 +805,65 @@ model AuditArchive {
   @@index([scope, guildId, toSeq])
   @@map("audit_archives")
 }
+
+// ─── Metrics module (Phase 4, item 16) ───────────────────────────────────────
+
+enum MetricScope {
+  SYSTEM
+  GATEWAY
+  API
+  DATABASE
+  CACHE
+  QUEUE
+  COMMANDS
+}
+
+enum MetricComparator {
+  GT
+  LT
+  GTE
+  LTE
+}
+
+enum MetricSeverity {
+  WARNING
+  CRITICAL
+}
+
+/// Low-frequency, aggregated rollup written by the recurring snapshot job.
+/// Prometheus is the source of truth for live data; these rows back the
+/// dashboard's historical charts only. Append-only with a soft-delete flag so
+/// the retention sweep can prune older rollups. `guildId` null => global.
+model MetricSnapshot {
+  id         String      @id @default(cuid())
+  scope      MetricScope
+  guildId    String?     @map("guild_id") @db.VarChar(32)
+  capturedAt DateTime    @default(now()) @map("captured_at")
+  values     Json
+  createdAt  DateTime    @default(now()) @map("created_at")
+  deletedAt  DateTime?   @map("deleted_at")
+
+  @@index([scope, capturedAt])
+  @@index([guildId, scope, capturedAt])
+  @@index([deletedAt])
+  @@map("metric_snapshots")
+}
+
+/// Per-guild override of an alerting threshold. Global defaults live in config;
+/// the effective threshold set = defaults layered under enabled overrides.
+model MetricThresholdOverride {
+  id         String           @id @default(cuid())
+  guildId    String           @map("guild_id") @db.VarChar(32)
+  metric     String           @db.VarChar(191)
+  comparator MetricComparator
+  value      Float
+  severity   MetricSeverity   @default(WARNING)
+  enabled    Boolean          @default(true)
+  createdAt  DateTime         @default(now()) @map("created_at")
+  updatedAt  DateTime         @updatedAt @map("updated_at")
+  deletedAt  DateTime?        @map("deleted_at")
+
+  @@unique([guildId, metric])
+  @@index([guildId, enabled])
+  @@map("metric_threshold_overrides")
+}
