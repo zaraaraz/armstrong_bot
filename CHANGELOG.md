@@ -1,3 +1,10 @@
+# [1.12.0](https://github.com/zaraaraz/armstrong_bot/compare/v1.11.0...v1.12.0) (2026-07-02)
+
+
+### Features
+
+* **notifications:** implement notification processing and delivery system ([4ce5103](https://github.com/zaraaraz/armstrong_bot/commit/4ce5103893b6a5ed23aeb857e9b5465073bcf597))
+
 # [1.11.0](https://github.com/zaraaraz/armstrong_bot/compare/v1.10.0...v1.11.0) (2026-07-02)
 
 
