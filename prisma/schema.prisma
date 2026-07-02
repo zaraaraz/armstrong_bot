@@ -725,3 +725,83 @@ model StorageUsage {
 
   @@map("storage_usage")
 }
+
+// ─── Audit module (Phase 4, item 15) ─────────────────────────────────────────
+
+enum AuditScope {
+  GUILD
+  GLOBAL
+}
+
+enum AuditSource {
+  COMMAND
+  DASHBOARD
+  API
+  JOB
+  SYSTEM
+  EVENT
+}
+
+enum AuditActorType {
+  USER
+  SYSTEM
+  BOT
+}
+
+/// Tamper-evident, append-only compliance ledger. Rows are immutable — there is
+/// intentionally no updatedAt/deletedAt; the retention job is the only deleter,
+/// and only after verified archival. `hash` chains to the predecessor's hash
+/// within (scope, guildId); the unique (scope, guildId, seq) + unique hash
+/// enforce ordering and reject duplicate/replayed inserts at the DB level.
+model AuditEntry {
+  id            String         @id @default(cuid())
+  scope         AuditScope
+  guildId       String?        @map("guild_id") @db.VarChar(32)
+  seq           BigInt
+  action        String         @db.VarChar(191)
+  source        AuditSource
+  actorId       String?        @map("actor_id") @db.VarChar(64)
+  actorType     AuditActorType @map("actor_type")
+  targetType    String?        @map("target_type") @db.VarChar(64)
+  targetId      String?        @map("target_id") @db.VarChar(191)
+  channelId     String?        @map("channel_id") @db.VarChar(32)
+  correlationId String         @map("correlation_id") @db.VarChar(64)
+  causationId   String?        @map("causation_id") @db.VarChar(64)
+  summary       String         @db.VarChar(255)
+  metadata      Json
+  before        Json?
+  after         Json?
+  previousHash  String?        @map("previous_hash") @db.Char(128)
+  hash          String         @unique @db.Char(128)
+  occurredAt    DateTime       @map("occurred_at")
+  createdAt     DateTime       @default(now()) @map("created_at")
+
+  @@unique([scope, guildId, seq])
+  @@index([guildId, occurredAt])
+  @@index([guildId, action])
+  @@index([actorId])
+  @@index([correlationId])
+  @@index([targetType, targetId])
+  @@index([occurredAt])
+  @@map("audit_entries")
+}
+
+/// Verified archive segment written by the retention job before pruning.
+/// `rootHash` anchors chain verification across the pruned boundary.
+model AuditArchive {
+  id         String     @id @default(cuid())
+  scope      AuditScope
+  guildId    String?    @map("guild_id") @db.VarChar(32)
+  format     String     @db.VarChar(16)
+  fromSeq    BigInt     @map("from_seq")
+  toSeq      BigInt     @map("to_seq")
+  entryCount Int        @map("entry_count")
+  byteSize   Int        @map("byte_size")
+  storageRef String     @map("storage_ref") @db.VarChar(512)
+  rootHash   String     @map("root_hash") @db.Char(128)
+  createdAt  DateTime   @default(now()) @map("created_at")
+
+  @@index([guildId, createdAt])
+  @@index([scope, guildId, toSeq])
+  @@map("audit_archives")
+}

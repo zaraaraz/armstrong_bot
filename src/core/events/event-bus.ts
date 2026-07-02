@@ -27,6 +27,13 @@ export interface SubscribeOptions {
   readonly durable?: boolean;
 }
 
+/**
+ * Passive observer of every envelope accepted for delivery, regardless of
+ * event name or delivery policy. Taps run fire-and-forget: they may not
+ * block, delay, or fail the publish path.
+ */
+export type EventTap = (envelope: EventEnvelope) => void;
+
 export abstract class EventBus {
   abstract publish<K extends EventName>(
     name: K,
@@ -47,4 +54,12 @@ export abstract class EventBus {
       readonly options?: PublishOptions;
     }>,
   ): Promise<ReadonlyArray<EventEnvelope>>;
+
+  /**
+   * Register a wildcard observer invoked once per published envelope (after
+   * idempotency screening, before dispatch). Unlike subscribe(), a tap sees
+   * every event on the bus — sync, async, or both — and cannot affect
+   * delivery: errors are swallowed and logged.
+   */
+  abstract tap(handlerId: string, observer: EventTap): Subscription;
 }

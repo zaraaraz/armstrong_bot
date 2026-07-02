@@ -1,0 +1,17 @@
+{
+  "actions.unknown": "Ação {action}",
+  "actions.audit.entry.recorded": "Registo de auditoria criado",
+  "actions.audit.chain.verified": "Cadeia de auditoria verificada",
+  "actions.audit.chain.broken": "Cadeia de auditoria quebrada",
+  "actions.audit.retention.archived": "Registos de auditoria arquivados",
+  "actions.audit.retention.updated": "Política de retenção atualizada",
+  "actions.audit.export.requested": "Exportação de auditoria pedida",
+  "actions.audit.export.performed": "Auditoria exportada",
+  "actions.audit.verify.performed": "Verificação de integridade executada",
+  "ui.explorer.title": "Explorador de auditoria",
+  "ui.integrity.valid": "Cadeia íntegra",
+  "ui.integrity.broken": "Cadeia quebrada na posição {seq}",
+  "ui.export.title": "Exportar registos",
+  "ui.retention.title": "Política de retenção",
+  "errors.forbidden": "Sem permissão para consultar a auditoria."
+}

@@ -505,6 +505,91 @@ The dashboard never mutates entries; it only reads, verifies, exports, and confi
 - Read/verify/export actions are themselves audited (meta-audit).
 - `audit.entry.recorded` never triggers a recursive audit entry.
 
+## 17b. Implementation deltas (as built — Phase 4, branch `feature/core-modules`)
+
+Recorded so the as-built code and this spec don't drift.
+
+- **Wildcard subscription → `EventBus.tap()`**: the core Event Bus has no
+  `'**'`/onAny subscription and no runtime enumeration of event names
+  (`GhostEventMap` is a type). The spec's "global wildcard sink" is realised
+  by a minimal additive core extension: `EventBus.tap(handlerId, observer)`
+  registers a passive observer invoked once per published envelope (any
+  delivery policy) inside `EventBusService.publish()` — after idempotency
+  screening, before dispatch. Taps are fire-and-forget: errors are logged and
+  swallowed, so audit can never block or break an emitter. This is the only
+  core behaviour change; `subscribe()` semantics are untouched.
+- **Queue**: BullMQ queue named `audit.ingest` (dot-separated per repo
+  convention, spec wrote `audit-ingest`), producer wrapper
+  `infrastructure/audit.queue.ts`, single worker in
+  `jobs/audit-ingest.processor.ts` — no core Queue layer exists (same as
+  scheduler/storage). The retention sweep is a repeatable job (job name
+  `retention`) on the same queue handled by the same worker, so there is no
+  separate `audit-retention.processor.ts` file; the archival/prune logic
+  lives in `domain/retention.service.ts`.
+- **Chain serialisation**: the Cache layer exposes no distributed lock, so
+  chain order is enforced by (1) an in-process per-`(scope, guildId)` mutex
+  in the worker and (2) optimistic bounded retry on the DB unique
+  `(scope, guildId, seq)` — correct even with a second instance appending
+  concurrently. Redis-lock hardening can slot in later without API changes.
+- **Prune bound correctness**: retention prunes `seq <= bound` where `bound`
+  = (first seq occurring at/after the cutoff) − 1, not "every row older than
+  cutoff" — late-arriving events can't punch holes in the chain. Verification
+  across the pruned boundary anchors on `AuditArchive.rootHash`.
+- **REST paths**: mounted at `/api/v1/audit/*` scoped by the caller's
+  `req.user.guildId` (scheduler precedent; `RestPermissionGuard` resolves
+  claims against the actor's own guild) instead of the spec's
+  `/api/v1/guilds/:guildId/audit`. GLOBAL entries live at `/api/v1/audit/global`
+  (claim `audit.read.global`). Response DTO keeps flat `targetType`/`targetId`
+  (not the nested `target` object) matching the export wire shape. Added
+  beyond spec: `GET /health` (queue depth/DLQ) and `GET/PUT /retention`
+  (per-guild policy, writes `GuildConfig.settings.audit`, meta-audited).
+- **Repository surface**: `IAuditRepository` stays read/append-only per spec;
+  the concrete `AuditRepository` adds retention-internal methods
+  (`chainHeads`, `firstSeq`, `firstSeqAtOrAfter`, `findBySeq`, `findAnchor`,
+  `createArchive`, `pruneUpTo`, `iterateChainRange`) that are not exported.
+- **Archives**: written to the local filesystem under `AUDIT_ARCHIVE_DIR`
+  (default `/srv/bots/armstrong/audit-archives`), `storageRef` = file path,
+  `wx` flag (never overwrite). The Storage module is deliberately NOT used —
+  §7 forbids module-to-module dependencies; S3/object-store backends remain a
+  §15 future extension.
+- **Config split**: `config/audit.config.ts` (Zod schemas + resolvers) +
+  `config/audit-config.service.ts` (ENV→DB→defaults, guild blob under
+  `GuildConfig.settings.audit`, 300 s cache) — scheduler/storage pattern.
+  `denyActionPrefixes` = global list ∪ per-guild list; `audit.entry.recorded`
+  is additionally hard-coded deny (recursion guard) regardless of config.
+  Added `AUDIT_ARCHIVE_DIR` and `AUDIT_RETENTION_CRON` (default `0 4 * * *`)
+  beyond the spec's schema.
+- **Ledger delivery semantics**: exactly-once in normal operation (BullMQ
+  jobId = envelope id dedupes enqueues; unique hash rejects replays). A
+  worker crash in the narrow window between insert and job-ack degrades to
+  at-least-once (the retried insert is rejected by the unique constraints) —
+  never lossy. Post-persist `audit.entry.recorded` emit failures are logged,
+  not retried, so a bus outage can't duplicate entries.
+- **Events registry**: added `src/core/events/registry/payloads/audit.payloads.ts`
+  + `AuditEventPayloads` into `GhostEventMap` (established pattern). Event
+  names match the bus's `module.entity.action` grammar.
+- **i18n**: label catalogs live at root `locales/{pt,en}/audit.json` (the
+  only location `FileBundleSource` loads from — the scheduler's module-local
+  `locales/` folder is not wired into the loader). `summary` stores the key
+  `audit:actions.<action>`; unknown actions fall back to the raw action
+  string in the dashboard.
+- **Observability**: `observability/audit.metrics.ts` (private `prom-client`
+  registry) + `audit.tracing.ts` (OTel, no-op until item 16 registers an
+  exporter). Scheduler/storage's own Pino "audit" adapters are NOT absorbed
+  here — that requires editing those modules (forbidden by this spec's
+  instructions); deferred to a follow-up under their scope.
+- **Migration**: `prisma/migrations/20260702120000_add_audit_module`
+  hand-authored (MySQL offline, same as Phases 3–4). Run
+  `prisma migrate deploy` when the DB is up. Enum values UPPERCASE matching
+  the public TS enum literals; columns snake_case via `@map`.
+- **Tests**: 77 unit specs across audit + core-events touchpoints (chain
+  determinism/tamper/property, canonical JSON, ingest normalisation/redaction/
+  deny/recursion, retention ordering/fault isolation, query cache/clamp,
+  verify/export meta-audit, processor optimistic retry + lock, export
+  serialisers, config resolution, consumer tap wiring). Coverage ≥ 96% on
+  domain/application (target ≥ 90). Integration (live MySQL/Redis) and
+  Playwright e2e follow the standing Phase 2–4 deferral.
+
 ## 18. Definition of Done
 
 - All Vitest unit + integration tests pass; e2e suite green; coverage ≥ 90% on domain/application.
