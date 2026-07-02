@@ -18,6 +18,12 @@ describe('AppModule DI graph', () => {
   it('compiles — every provider dependency resolves', async () => {
     // Necord validates a token is present at module construction.
     process.env['DISCORD_TOKEN'] = process.env['DISCORD_TOKEN'] ?? 'test-token';
+    // PrismaService's constructor requires DATABASE_URL to build its adapter.
+    // Compiling the DI graph never connects (no onModuleInit), so the adapter
+    // only parses this string — any well-formed URL is enough here.
+    process.env['DATABASE_URL'] =
+      process.env['DATABASE_URL'] ??
+      'mysql://armstrong:armstrong@localhost:3307/armstrong_bot';
 
     const moduleRef = await Test.createTestingModule({
       imports: [AppModule],
