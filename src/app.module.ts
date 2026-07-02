@@ -12,6 +12,7 @@ import { ApiModule } from './api/api.module';
 import { DashboardModule } from './dashboard/dashboard.module';
 import { SchedulerModule } from './modules/scheduler/scheduler.module';
 import { StorageModule } from './modules/storage/storage.module';
+import { AuditModule } from './modules/audit/audit.module';
 import { BotModule } from './bot/bot.module';
 
 @Module({
@@ -29,6 +30,7 @@ import { BotModule } from './bot/bot.module';
     DashboardModule,
     SchedulerModule,
     StorageModule,
+    AuditModule,
     BotModule,
   ],
 })

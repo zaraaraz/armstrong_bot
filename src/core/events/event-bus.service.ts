@@ -4,6 +4,7 @@ import {
   EventBus,
   type PublishOptions,
   type EventHandler,
+  type EventTap,
   type Subscription,
   type SubscribeOptions,
 } from './event-bus';
@@ -19,6 +20,7 @@ import { EventLogRepository } from './repositories/event-log.repository';
 @Injectable()
 export class EventBusService extends EventBus {
   private readonly logger = new Logger(EventBusService.name);
+  private readonly taps = new Map<string, EventTap>();
 
   constructor(
     private readonly sync: SyncDispatcher,
@@ -70,6 +72,8 @@ export class EventBusService extends EventBus {
       await this.idempotency.markSeen(envelope.idempotencyKey);
     }
 
+    this.notifyTaps(envelope);
+
     if (delivery === 'async' || delivery === 'both') {
       await this.eventLog.persist(envelope, delivery);
     }
@@ -102,6 +106,31 @@ export class EventBusService extends EventBus {
         asyncSub.unsubscribe();
       },
     };
+  }
+
+  tap(handlerId: string, observer: EventTap): Subscription {
+    this.taps.set(handlerId, observer);
+    return {
+      handlerId,
+      unsubscribe: () => {
+        this.taps.delete(handlerId);
+      },
+    };
+  }
+
+  /** Taps are passive sinks: a failing tap never blocks or breaks a publish. */
+  private notifyTaps(envelope: EventEnvelope): void {
+    for (const [handlerId, observer] of this.taps) {
+      try {
+        observer(envelope);
+      } catch (err) {
+        this.logger.warn(
+          `tap ${handlerId} threw for ${envelope.name}: ${
+            err instanceof Error ? err.message : String(err)
+          }`,
+        );
+      }
+    }
   }
 
   async publishBatch(

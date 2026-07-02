@@ -1,0 +1,17 @@
+{
+  "actions.unknown": "Action {action}",
+  "actions.audit.entry.recorded": "Audit entry recorded",
+  "actions.audit.chain.verified": "Audit chain verified",
+  "actions.audit.chain.broken": "Audit chain broken",
+  "actions.audit.retention.archived": "Audit entries archived",
+  "actions.audit.retention.updated": "Retention policy updated",
+  "actions.audit.export.requested": "Audit export requested",
+  "actions.audit.export.performed": "Audit exported",
+  "actions.audit.verify.performed": "Integrity verification executed",
+  "ui.explorer.title": "Audit explorer",
+  "ui.integrity.valid": "Chain intact",
+  "ui.integrity.broken": "Chain broken at position {seq}",
+  "ui.export.title": "Export entries",
+  "ui.retention.title": "Retention policy",
+  "errors.forbidden": "No permission to query the audit ledger."
+}

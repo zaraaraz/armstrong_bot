@@ -8,6 +8,7 @@ const NAV = [
   ['overview', 'Overview'],
   ['modules', 'Modules'],
   ['scheduler', 'Scheduler'],
+  ['audit', 'Audit'],
   ['logs', 'Logs'],
   ['api-keys', 'API Keys'],
   ['backups', 'Backups'],

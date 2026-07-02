@@ -8,6 +8,7 @@ import type {
 } from '../../core/events/envelope/event-envelope';
 import type {
   EventHandler,
+  EventTap,
   PublishOptions,
   Subscription,
   SubscribeOptions,
@@ -29,6 +30,7 @@ const SYSTEM_ACTOR: EventActor = { type: 'system', id: 'test' };
 
 export class FakeEventBusImpl extends EventBus implements FakeEventBus {
   private readonly _recorded: RecordedEvent[] = [];
+  private readonly _taps = new Map<string, EventTap>();
 
   override publish<K extends EventName>(
     name: K,
@@ -36,7 +38,7 @@ export class FakeEventBusImpl extends EventBus implements FakeEventBus {
     _options?: PublishOptions,
   ): Promise<EventEnvelope<K>> {
     this._recorded.push({ name, payload, emittedAt: new Date() });
-    return Promise.resolve({
+    const envelope: EventEnvelope<K> = {
       id: `fake-${this._recorded.length}`,
       name,
       payload,
@@ -46,7 +48,19 @@ export class FakeEventBusImpl extends EventBus implements FakeEventBus {
       correlationId: `corr-${this._recorded.length}`,
       causationId: null,
       version: 1,
-    });
+    };
+    for (const tap of this._taps.values()) tap(envelope);
+    return Promise.resolve(envelope);
+  }
+
+  override tap(handlerId: string, observer: EventTap): Subscription {
+    this._taps.set(handlerId, observer);
+    return {
+      handlerId,
+      unsubscribe: () => {
+        this._taps.delete(handlerId);
+      },
+    };
   }
 
   override subscribe<K extends EventName>(

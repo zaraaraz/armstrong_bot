@@ -75,6 +75,19 @@ export default defineConfig({
         'src/modules/storage/observability/**',
         'src/modules/storage/application/storage-event.emitter.ts',
         'src/modules/storage/config/storage-config.service.ts',
+        // Audit (Phase 4, item 15): the BullMQ producer/worker need a live
+        // Redis, the archive store wraps the filesystem, the emitter/consumer
+        // are thin EventBus bridges, and the config service needs live
+        // Prisma+Redis — integration-suite surfaces, mirroring the scheduler
+        // and storage exclusions above. Domain + application logic (chain,
+        // retention, ingest normalisation, query service) IS unit-covered.
+        'src/modules/audit/infrastructure/audit.queue.ts',
+        'src/modules/audit/infrastructure/audit-archive.store.ts',
+        'src/modules/audit/jobs/**',
+        'src/modules/audit/observability/**',
+        'src/modules/audit/events/audit-event.emitter.ts',
+        'src/modules/audit/events/audit-event.consumer.ts',
+        'src/modules/audit/config/audit-config.service.ts',
       ],
     },
   },

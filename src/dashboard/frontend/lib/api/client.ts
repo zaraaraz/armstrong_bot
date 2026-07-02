@@ -151,6 +151,108 @@ export const scheduler = {
     }),
 };
 
+// ─── Audit (bot API under /api/v1/audit) ────────────────────────────────────
+
+export type AuditExportFormat = 'json' | 'ndjson' | 'csv';
+
+export interface AuditEntryView {
+  id: string;
+  scope: 'GUILD' | 'GLOBAL';
+  guildId: string | null;
+  seq: string;
+  action: string;
+  source: 'COMMAND' | 'DASHBOARD' | 'API' | 'JOB' | 'SYSTEM' | 'EVENT';
+  actorId: string | null;
+  actorType: 'USER' | 'SYSTEM' | 'BOT';
+  targetType: string | null;
+  targetId: string | null;
+  channelId: string | null;
+  correlationId: string;
+  causationId: string | null;
+  summary: string;
+  metadata: Record<string, unknown>;
+  before: Record<string, unknown> | null;
+  after: Record<string, unknown> | null;
+  previousHash: string | null;
+  hash: string;
+  occurredAt: string;
+  createdAt: string;
+}
+
+export interface AuditFilters {
+  actorId?: string;
+  action?: string;
+  targetType?: string;
+  targetId?: string;
+  correlationId?: string;
+  source?: string;
+  from?: string;
+  to?: string;
+  page?: number;
+  pageSize?: number;
+}
+
+export interface ChainVerification {
+  scope: 'GUILD' | 'GLOBAL';
+  guildId: string | null;
+  checked: number;
+  valid: boolean;
+  firstBrokenSeq: string | null;
+  verifiedAt: string;
+}
+
+export interface AuditRetentionConfig {
+  retentionDays: number;
+  archiveBeforeDelete: boolean;
+  archiveFormat: AuditExportFormat;
+}
+
+export interface AuditHealth {
+  queueDepth: number;
+  dlqSize: number;
+  ingestEnabled: boolean;
+}
+
+interface AuditPaginated<T> {
+  items: T[];
+  page: number;
+  pageSize: number;
+  total: number;
+}
+
+export const audit = {
+  entries: (filters: AuditFilters = {}) =>
+    request<AuditPaginated<AuditEntryView>>(
+      `/api/v1/audit/entries${schedulerQuery(filters as Record<string, string | number | undefined>)}`,
+    ),
+  trace: (correlationId: string) =>
+    request<AuditEntryView[]>(
+      `/api/v1/audit/correlations/${encodeURIComponent(correlationId)}`,
+    ),
+  verify: () => request<ChainVerification>('/api/v1/audit/verify'),
+  retention: () => request<AuditRetentionConfig>('/api/v1/audit/retention'),
+  updateRetention: (patch: Partial<AuditRetentionConfig>) =>
+    request<AuditRetentionConfig>('/api/v1/audit/retention', {
+      method: 'PUT',
+      body: JSON.stringify(patch),
+    }),
+  health: () => request<AuditHealth>('/api/v1/audit/health'),
+  /** Downloads an export; returns the raw response for blob handling. */
+  export: async (
+    format: AuditExportFormat,
+    filters: Omit<AuditFilters, 'page' | 'pageSize'> = {},
+  ): Promise<Blob> => {
+    const res = await fetch('/api/v1/audit/export', {
+      method: 'POST',
+      credentials: 'include',
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify({ format, ...filters }),
+    });
+    if (!res.ok) throw new ApiError(res.status, await safeText(res));
+    return res.blob();
+  },
+};
+
 // ─── Dashboard resource types (mirror backend/interfaces) ──────────────────
 
 export interface GuildOverview {
@@ -243,4 +345,5 @@ export const api = {
   realtimeTicket: () =>
     request<{ ticket: string }>('/api/dashboard/realtime/ticket'),
   scheduler,
+  audit,
 };

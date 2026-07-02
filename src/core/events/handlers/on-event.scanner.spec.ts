@@ -38,6 +38,10 @@ class FakeEventBus extends EventBus {
   publishBatch(): Promise<ReadonlyArray<EventEnvelope>> {
     throw new Error('not used in this test');
   }
+
+  tap(handlerId: string) {
+    return { handlerId, unsubscribe: () => undefined };
+  }
 }
 
 @Injectable()
