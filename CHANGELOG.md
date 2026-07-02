@@ -1,3 +1,10 @@
+# [1.15.0](https://github.com/zaraaraz/armstrong_bot/compare/v1.14.0...v1.15.0) (2026-07-02)
+
+
+### Features
+
+* **webhooks:** implement signature verification for GitHub and Stripe webhooks ([5bd72f6](https://github.com/zaraaraz/armstrong_bot/commit/5bd72f61f7d933216969e83ff611f2b8a9cb5ed0))
+
 # [1.14.0](https://github.com/zaraaraz/armstrong_bot/compare/v1.13.0...v1.14.0) (2026-07-02)
 
 
