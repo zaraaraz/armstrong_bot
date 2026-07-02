@@ -14,6 +14,7 @@ import { SchedulerModule } from './modules/scheduler/scheduler.module';
 import { StorageModule } from './modules/storage/storage.module';
 import { AuditModule } from './modules/audit/audit.module';
 import { MetricsModule } from './modules/metrics/metrics.module';
+import { NotificationsModule } from './modules/notifications/notifications.module';
 import { BotModule } from './bot/bot.module';
 
 @Module({
@@ -33,6 +34,7 @@ import { BotModule } from './bot/bot.module';
     StorageModule,
     AuditModule,
     MetricsModule,
+    NotificationsModule,
     BotModule,
   ],
 })

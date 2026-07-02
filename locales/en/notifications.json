@@ -1,0 +1,20 @@
+{
+  "ui.feed.title": "Notifications",
+  "ui.feed.status.pending": "Pending",
+  "ui.feed.status.sent": "Sent",
+  "ui.feed.status.failed": "Failed",
+  "ui.feed.status.dead": "Dead",
+  "ui.feed.status.cancelled": "Cancelled",
+  "ui.prefs.title": "Notification preferences",
+  "ui.prefs.quietHours": "Quiet hours",
+  "ui.prefs.digest": "Digest",
+  "ui.templates.title": "Template editor",
+  "ui.integrations.title": "Integrations",
+  "ui.dlq.title": "Delivery failures",
+  "errors.forbidden": "You do not have permission to manage notifications.",
+  "commands.guildOnly": "This command only works in a guild.",
+  "commands.dispatched": "Notification dispatched.",
+  "commands.subscribed": "Subscription created.",
+  "commands.removed": "Subscription removed.",
+  "commands.notFound": "Subscription not found."
+}

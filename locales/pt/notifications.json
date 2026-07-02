@@ -1,0 +1,20 @@
+{
+  "ui.feed.title": "Notificações",
+  "ui.feed.status.pending": "Pendente",
+  "ui.feed.status.sent": "Enviada",
+  "ui.feed.status.failed": "Falhou",
+  "ui.feed.status.dead": "Descartada",
+  "ui.feed.status.cancelled": "Cancelada",
+  "ui.prefs.title": "Preferências de notificações",
+  "ui.prefs.quietHours": "Horário de silêncio",
+  "ui.prefs.digest": "Resumo periódico",
+  "ui.templates.title": "Editor de modelos",
+  "ui.integrations.title": "Integrações",
+  "ui.dlq.title": "Falhas de entrega",
+  "errors.forbidden": "Sem permissão para gerir notificações.",
+  "commands.guildOnly": "Este comando só funciona num servidor.",
+  "commands.dispatched": "Notificação enviada.",
+  "commands.subscribed": "Subscrição criada.",
+  "commands.removed": "Subscrição removida.",
+  "commands.notFound": "Subscrição não encontrada."
+}
