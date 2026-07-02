@@ -1,3 +1,10 @@
+# [1.11.0](https://github.com/zaraaraz/armstrong_bot/compare/v1.10.0...v1.11.0) (2026-07-02)
+
+
+### Features
+
+* **metrics:** implement threshold management and metrics snapshotting ([0c1be58](https://github.com/zaraaraz/armstrong_bot/commit/0c1be584696aa1ec9a2014ed684365086ec118bf))
+
 # [1.10.0](https://github.com/zaraaraz/armstrong_bot/compare/v1.9.0...v1.10.0) (2026-07-02)
 
 
