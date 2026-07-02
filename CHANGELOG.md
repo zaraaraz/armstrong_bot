@@ -1,3 +1,11 @@
+# [1.9.0](https://github.com/zaraaraz/armstrong_bot/compare/v1.8.0...v1.9.0) (2026-07-02)
+
+
+### Features
+
+* **audit:** implement Audit module (Phase 4, item 15) ([ba2aa1a](https://github.com/zaraaraz/armstrong_bot/commit/ba2aa1a595a1d15b69f563b31c03d9f2a0caf481))
+* **dashboard:** dark theme across the entire backoffice ([c7a3fc4](https://github.com/zaraaraz/armstrong_bot/commit/c7a3fc4de498a24490b63cb9e3e925c084c2f42b))
+
 # [1.8.0](https://github.com/zaraaraz/armstrong_bot/compare/v1.7.1...v1.8.0) (2026-07-01)
 
 
