@@ -1,0 +1,11 @@
+{
+  "id": "d4f9c2a1-6b3e-4c8d-9f1a-2e7b5c6d8a90",
+  "event": "player.join",
+  "player": {
+    "id": "steam:110000112345678",
+    "name": "GhostRider"
+  },
+  "server": {
+    "name": "Ghost RP #1"
+  }
+}

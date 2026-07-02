@@ -15,6 +15,7 @@ import { StorageModule } from './modules/storage/storage.module';
 import { AuditModule } from './modules/audit/audit.module';
 import { MetricsModule } from './modules/metrics/metrics.module';
 import { NotificationsModule } from './modules/notifications/notifications.module';
+import { WebhooksModule } from './modules/webhooks/webhooks.module';
 import { BotModule } from './bot/bot.module';
 
 @Module({
@@ -35,6 +36,7 @@ import { BotModule } from './bot/bot.module';
     AuditModule,
     MetricsModule,
     NotificationsModule,
+    WebhooksModule,
     BotModule,
   ],
 })

@@ -129,6 +129,19 @@ export default defineConfig({
         'src/modules/notifications/application/integration/youtube-notifier.service.ts',
         'src/modules/notifications/events/notification-event.emitter.ts',
         'src/modules/notifications/events/consumers/**',
+        // Webhooks (Phase 4, item 18): same categories as the modules above —
+        // the two BullMQ producers/workers need a live Redis, the outbound
+        // delivery transport reaches external HTTPS endpoints, the config
+        // service needs live Prisma+Redis, and the emitter/consumer bridge the
+        // EventBus. The application services orchestrate those integration
+        // seams (queue enqueue, EncryptionService, repositories) so they are
+        // integration-covered too. The domain (verifiers, normalizers,
+        // registries, idempotency guard) and the config parser ARE unit-covered.
+        'src/modules/webhooks/jobs/**',
+        'src/modules/webhooks/application/**',
+        'src/modules/webhooks/config/webhooks-config.service.ts',
+        'src/modules/webhooks/events/webhook-event.emitter.ts',
+        'src/modules/webhooks/events/consumers/**',
       ],
     },
   },

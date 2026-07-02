@@ -998,3 +998,121 @@ model IntegrationSubscription {
   @@index([deletedAt])
   @@map("integration_subscriptions")
 }
+
+// ─── Webhooks (Phase 4, item 18) ────────────────────────────────────────────
+
+/// Provider of an inbound webhook endpoint. Lowercase values match the public
+/// wire enum (`WebhookProvider`) so the repository boundary casts directly.
+enum WebhookProviderType {
+  github
+  stripe
+  fivem
+  custom
+}
+
+/// Lifecycle state of an inbound or outbound webhook delivery. Distinct from the
+/// notifications `DeliveryStatus` enum (different states, different lifecycle).
+enum WebhookDeliveryStatus {
+  received
+  verified
+  rejected
+  processing
+  processed
+  failed
+  dead_lettered
+}
+
+/// A registered inbound webhook endpoint. `token` is the unguessable, rotatable
+/// public URL slug (`/webhooks/in/:token`). `signingSecret` holds AES-GCM
+/// CIPHERTEXT (never plaintext). `guildId` null => a global/system endpoint.
+model WebhookEndpoint {
+  id            String                   @id @default(cuid())
+  guildId       String?                  @map("guild_id") @db.VarChar(32)
+  provider      WebhookProviderType
+  token         String                   @unique @db.VarChar(64)
+  signingSecret String                   @map("signing_secret") @db.Text
+  label         String                   @db.VarChar(191)
+  enabled       Boolean                  @default(true)
+  createdById   String                   @map("created_by_id") @db.VarChar(32)
+  createdAt     DateTime                 @default(now()) @map("created_at")
+  updatedAt     DateTime                 @updatedAt @map("updated_at")
+  deletedAt     DateTime?                @map("deleted_at")
+
+  deliveries    WebhookIngressDelivery[]
+
+  @@index([guildId, provider])
+  @@index([enabled])
+  @@index([deletedAt])
+  @@map("webhook_endpoints")
+}
+
+/// An inbound webhook receipt (the spec's "WebhookDelivery"; renamed to avoid a
+/// collision with the pre-existing generic `WebhookDelivery` model). Raw body is
+/// retained for replay and purged past retention. `externalId` is the provider's
+/// delivery id — the DB-level idempotency key.
+model WebhookIngressDelivery {
+  id           String                @id @default(cuid())
+  endpointId   String                @map("endpoint_id")
+  endpoint     WebhookEndpoint       @relation(fields: [endpointId], references: [id], onDelete: Cascade)
+  guildId      String?               @map("guild_id") @db.VarChar(32)
+  provider     WebhookProviderType
+  externalId   String?               @map("external_id") @db.VarChar(191)
+  eventType    String?               @map("event_type") @db.VarChar(191)
+  status       WebhookDeliveryStatus @default(received)
+  rawBody      Bytes                 @map("raw_body")
+  headers      Json
+  rejectReason String?               @map("reject_reason") @db.Text
+  attempts     Int                   @default(0)
+  receivedAt   DateTime              @default(now()) @map("received_at")
+  processedAt  DateTime?             @map("processed_at")
+
+  @@unique([endpointId, externalId])
+  @@index([guildId, status])
+  @@index([provider, eventType])
+  @@index([receivedAt])
+  @@map("webhook_ingress_deliveries")
+}
+
+/// A guild's outbound subscription: forward a platform domain event to an
+/// external HTTPS target, HMAC-signed. `signingSecret` holds ciphertext.
+model WebhookSubscription {
+  id            String                     @id @default(cuid())
+  guildId       String                     @map("guild_id") @db.VarChar(32)
+  eventType     String                     @map("event_type") @db.VarChar(191)
+  targetUrl     String                     @map("target_url") @db.Text
+  signingSecret String                     @map("signing_secret") @db.Text
+  enabled       Boolean                    @default(true)
+  filter        Json?
+  createdById   String                     @map("created_by_id") @db.VarChar(32)
+  createdAt     DateTime                   @default(now()) @map("created_at")
+  updatedAt     DateTime                   @updatedAt @map("updated_at")
+  deletedAt     DateTime?                  @map("deleted_at")
+
+  deliveries    WebhookOutboundDelivery[]
+
+  @@index([guildId, eventType, enabled])
+  @@index([deletedAt])
+  @@map("webhook_subscriptions")
+}
+
+/// One outbound delivery attempt record (the spec's "OutboundDelivery"; renamed
+/// for namespacing). Walks the delivery-status machine as the worker retries.
+model WebhookOutboundDelivery {
+  id             String                @id @default(cuid())
+  subscriptionId String                @map("subscription_id")
+  subscription   WebhookSubscription   @relation(fields: [subscriptionId], references: [id], onDelete: Cascade)
+  guildId        String                @map("guild_id") @db.VarChar(32)
+  eventType      String                @map("event_type") @db.VarChar(191)
+  status         WebhookDeliveryStatus @default(processing)
+  attempts       Int                   @default(0)
+  lastStatusCode Int?                  @map("last_status_code")
+  lastError      String?               @map("last_error") @db.Text
+  payload        Json
+  createdAt      DateTime              @default(now()) @map("created_at")
+  deliveredAt    DateTime?             @map("delivered_at")
+
+  @@index([subscriptionId, status])
+  @@index([guildId, eventType])
+  @@index([createdAt])
+  @@map("webhook_outbound_deliveries")
+}

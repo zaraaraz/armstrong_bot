@@ -1,0 +1,12 @@
+{
+  "action": "opened",
+  "number": 42,
+  "pull_request": {
+    "title": "Add PayloadNormalizer strategies",
+    "state": "open"
+  },
+  "repository": {
+    "full_name": "ghost-org/armstrong-bot",
+    "html_url": "https://github.com/ghost-org/armstrong-bot"
+  }
+}

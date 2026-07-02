@@ -12,6 +12,7 @@ import type { SchedulerEventPayloads } from './payloads/scheduler.payloads';
 import type { AuditEventPayloads } from './payloads/audit.payloads';
 import type { MetricsEventPayloads } from './payloads/metrics.payloads';
 import type { NotificationsEventPayloads } from './payloads/notifications.payloads';
+import type { WebhooksEventPayloads } from './payloads/webhooks.payloads';
 
 export interface GhostEventMap
   extends
@@ -28,6 +29,7 @@ export interface GhostEventMap
     SchedulerEventPayloads,
     AuditEventPayloads,
     MetricsEventPayloads,
-    NotificationsEventPayloads {}
+    NotificationsEventPayloads,
+    WebhooksEventPayloads {}
 
 export type EventName = keyof GhostEventMap;

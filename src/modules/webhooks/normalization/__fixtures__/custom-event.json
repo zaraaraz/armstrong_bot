@@ -1,0 +1,10 @@
+{
+  "id": "custom-01J9ZK3ABCDEF1234567890",
+  "type": "Order.Created",
+  "timestamp": "2026-07-02T09:20:00.000Z",
+  "data": {
+    "orderId": "ord_98765",
+    "total": 4999,
+    "currency": "eur"
+  }
+}

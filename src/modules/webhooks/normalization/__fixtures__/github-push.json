@@ -1,0 +1,16 @@
+{
+  "ref": "refs/heads/main",
+  "before": "9d8f3a1c0b7e5f4a2d1c0b9a8f7e6d5c4b3a2109",
+  "after": "a1b2c3d4e5f60718293a4b5c6d7e8f90a1b2c3d4",
+  "repository": {
+    "full_name": "ghost-org/armstrong-bot",
+    "html_url": "https://github.com/ghost-org/armstrong-bot"
+  },
+  "pusher": {
+    "name": "octocat"
+  },
+  "commits": [
+    { "id": "a1b2c3d4e5f60718293a4b5c6d7e8f90a1b2c3d4", "message": "feat: add webhooks normalization" },
+    { "id": "b2c3d4e5f60718293a4b5c6d7e8f90a1b2c3d4e5", "message": "test: fixtures" }
+  ]
+}
