@@ -21,7 +21,7 @@ export default function OverviewPage({
       .catch(() => setError('Failed to load overview'));
   }, [guildId]);
 
-  if (error) return <p style={{ color: '#dc2626' }}>{error}</p>;
+  if (error) return <p style={{ color: '#f87171' }}>{error}</p>;
   if (!data) return <p>Loading…</p>;
 
   return (

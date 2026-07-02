@@ -2,7 +2,24 @@
 
 import type { CSSProperties, ReactNode } from 'react';
 
-/** Small shared UI primitives so pages stay visually consistent. */
+/**
+ * Small shared UI primitives so pages stay visually consistent.
+ * Dark theme palette (Discord-inspired) — single source of truth.
+ */
+export const palette = {
+  pageBg: '#0f1117',
+  surface: 'rgba(255, 255, 255, 0.035)',
+  surfaceBorder: 'rgba(255, 255, 255, 0.07)',
+  panel: '#151823',
+  text: '#e5e7eb',
+  muted: '#9ca3af',
+  faint: 'rgba(255, 255, 255, 0.06)',
+  accent: '#5865F2',
+  accentSoft: '#7983f5',
+  success: '#23a55a',
+  warning: '#d97706',
+  danger: '#f87171',
+} as const;
 
 export function Card({
   title,
@@ -16,15 +33,23 @@ export function Card({
   return (
     <section
       style={{
-        border: '1px solid #e5e7eb',
-        borderRadius: 8,
+        border: `1px solid ${palette.surfaceBorder}`,
+        borderRadius: 14,
         padding: 20,
-        background: 'white',
+        background: palette.surface,
         borderTop: accent ? `3px solid ${accent}` : undefined,
       }}
     >
       {title ? (
-        <h3 style={{ margin: '0 0 12px', fontSize: 14, color: '#374151' }}>
+        <h3
+          style={{
+            margin: '0 0 12px',
+            fontSize: 12.5,
+            color: palette.muted,
+            textTransform: 'uppercase',
+            letterSpacing: 1,
+          }}
+        >
           {title}
         </h3>
       ) : null}
@@ -44,8 +69,12 @@ export function Stat({
 }): ReactNode {
   return (
     <div style={{ textAlign: 'center', padding: '8px 20px' }}>
-      <div style={{ fontSize: 28, fontWeight: 700, color }}>{value}</div>
-      <div style={{ fontSize: 12, color: '#6b7280', marginTop: 4 }}>{label}</div>
+      <div style={{ fontSize: 28, fontWeight: 700, color: color ?? palette.text }}>
+        {value}
+      </div>
+      <div style={{ fontSize: 12, color: palette.muted, marginTop: 4 }}>
+        {label}
+      </div>
     </div>
   );
 }
@@ -64,9 +93,21 @@ export function Button({
   type?: 'button' | 'submit';
 }): ReactNode {
   const colors: Record<string, CSSProperties> = {
-    default: { background: '#f3f4f6', color: '#111827', border: '1px solid #d1d5db' },
-    primary: { background: '#5865F2', color: 'white', border: 'none' },
-    danger: { background: 'white', color: '#dc2626', border: '1px solid #fca5a5' },
+    default: {
+      background: 'rgba(255, 255, 255, 0.06)',
+      color: palette.text,
+      border: `1px solid rgba(255, 255, 255, 0.14)`,
+    },
+    primary: {
+      background: palette.accent,
+      color: 'white',
+      border: '1px solid transparent',
+    },
+    danger: {
+      background: 'transparent',
+      color: palette.danger,
+      border: '1px solid rgba(248, 113, 113, 0.4)',
+    },
   };
   return (
     <button
@@ -75,12 +116,12 @@ export function Button({
       disabled={disabled}
       style={{
         ...colors[variant],
-        borderRadius: 6,
+        borderRadius: 8,
         padding: '8px 14px',
         fontSize: 13,
-        fontWeight: 500,
+        fontWeight: 600,
         cursor: disabled ? 'not-allowed' : 'pointer',
-        opacity: disabled ? 0.6 : 1,
+        opacity: disabled ? 0.55 : 1,
       }}
     >
       {children}
@@ -90,16 +131,18 @@ export function Button({
 
 const TH: CSSProperties = {
   textAlign: 'left',
-  borderBottom: '2px solid #e5e7eb',
+  borderBottom: `1px solid rgba(255, 255, 255, 0.12)`,
   padding: '8px 12px',
-  fontSize: 12,
-  color: '#6b7280',
+  fontSize: 11.5,
+  color: palette.muted,
   textTransform: 'uppercase',
+  letterSpacing: 0.8,
 };
 const TD: CSSProperties = {
   padding: '10px 12px',
-  borderBottom: '1px solid #f3f4f6',
+  borderBottom: `1px solid ${palette.faint}`,
   fontSize: 13,
+  color: palette.text,
 };
 
 export function Table({
@@ -125,14 +168,38 @@ export function Table({
   );
 }
 
-export function Td({ children, mono }: { children: ReactNode; mono?: boolean }): ReactNode {
-  return <td style={{ ...TD, fontFamily: mono ? 'monospace' : undefined }}>{children}</td>;
+export function Td({
+  children,
+  mono,
+}: {
+  children: ReactNode;
+  mono?: boolean;
+}): ReactNode {
+  return (
+    <td style={{ ...TD, fontFamily: mono ? 'monospace' : undefined }}>
+      {children}
+    </td>
+  );
 }
 
-export function Empty({ colSpan, text }: { colSpan: number; text: string }): ReactNode {
+export function Empty({
+  colSpan,
+  text,
+}: {
+  colSpan: number;
+  text: string;
+}): ReactNode {
   return (
     <tr>
-      <td colSpan={colSpan} style={{ ...TD, color: '#9ca3af', textAlign: 'center', padding: 24 }}>
+      <td
+        colSpan={colSpan}
+        style={{
+          ...TD,
+          color: palette.muted,
+          textAlign: 'center',
+          padding: 24,
+        }}
+      >
         {text}
       </td>
     </tr>

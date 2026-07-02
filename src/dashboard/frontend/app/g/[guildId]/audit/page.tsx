@@ -50,13 +50,13 @@ function JsonBlock({
   if (!value || Object.keys(value).length === 0) return null;
   return (
     <div style={{ marginBottom: 12 }}>
-      <div style={{ fontSize: 12, fontWeight: 600, color: '#6b7280', marginBottom: 4 }}>
+      <div style={{ fontSize: 12, fontWeight: 600, color: '#9ca3af', marginBottom: 4 }}>
         {title}
       </div>
       <pre
         style={{
-          background: '#f9fafb',
-          border: '1px solid #e5e7eb',
+          background: 'rgba(255,255,255,0.03)',
+          border: '1px solid rgba(255,255,255,0.08)',
           borderRadius: 6,
           padding: 10,
           fontSize: 12,
@@ -122,7 +122,7 @@ function IntegrityWidget(): ReactNode {
         ) : null}
         <span style={{ flex: 1 }} />
         {error ? (
-          <span style={{ color: '#dc2626', fontSize: 12 }}>{error}</span>
+          <span style={{ color: '#f87171', fontSize: 12 }}>{error}</span>
         ) : null}
         <Button onClick={verify} disabled={busy} variant="primary">
           {busy ? 'Verifying…' : 'Verify now'}
@@ -181,7 +181,7 @@ function RetentionCard(): ReactNode {
   return (
     <Card title="Retention">
       <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap' }}>
-        <label style={{ fontSize: 13, color: '#374151' }}>
+        <label style={{ fontSize: 13, color: '#9ca3af' }}>
           Keep entries for{' '}
           <input
             value={days}
@@ -189,13 +189,13 @@ function RetentionCard(): ReactNode {
             style={{
               width: 70,
               padding: '4px 8px',
-              border: '1px solid #d1d5db',
+              border: '1px solid rgba(255,255,255,0.15)',
               borderRadius: 6,
             }}
           />{' '}
           days
         </label>
-        <label style={{ fontSize: 13, color: '#374151' }}>
+        <label style={{ fontSize: 13, color: '#9ca3af' }}>
           <input
             type="checkbox"
             checked={archive}
@@ -295,7 +295,7 @@ export default function AuditPage({
   const totalPages = Math.max(1, Math.ceil(total / pageSize));
   const inputStyle = {
     padding: '6px 10px',
-    border: '1px solid #d1d5db',
+    border: '1px solid rgba(255,255,255,0.15)',
     borderRadius: 6,
     fontSize: 13,
   } as const;
@@ -370,7 +370,7 @@ export default function AuditPage({
         </div>
 
         {error ? (
-          <div style={{ color: '#dc2626', fontSize: 13, marginBottom: 8 }}>{error}</div>
+          <div style={{ color: '#f87171', fontSize: 13, marginBottom: 8 }}>{error}</div>
         ) : null}
 
         <Table columns={['When', 'Action', 'Source', 'Actor', 'Target', 'Seq']}>
@@ -406,7 +406,7 @@ export default function AuditPage({
             justifyContent: 'flex-end',
           }}
         >
-          <span style={{ fontSize: 12, color: '#6b7280' }}>
+          <span style={{ fontSize: 12, color: '#9ca3af' }}>
             {total} entries · page {page}/{totalPages}
           </span>
           <Button onClick={() => setPage((p) => Math.max(1, p - 1))} disabled={page <= 1}>
@@ -436,7 +436,7 @@ export default function AuditPage({
           <div
             onClick={(e) => e.stopPropagation()}
             style={{
-              background: 'white',
+              background: '#151823',
               borderRadius: 10,
               padding: 24,
               width: 640,
@@ -446,7 +446,7 @@ export default function AuditPage({
             }}
           >
             <h3 style={{ marginTop: 0, fontFamily: 'monospace' }}>{selected.action}</h3>
-            <div style={{ fontSize: 13, color: '#374151', marginBottom: 12 }}>
+            <div style={{ fontSize: 13, color: '#9ca3af', marginBottom: 12 }}>
               <div>
                 <b>When:</b> {fmtDate(selected.occurredAt)} · <b>Seq:</b> {selected.seq} ·{' '}
                 <SourceBadge source={selected.source} />
@@ -506,7 +506,7 @@ export default function AuditPage({
           <div
             onClick={(e) => e.stopPropagation()}
             style={{
-              background: 'white',
+              background: '#151823',
               borderRadius: 10,
               padding: 24,
               width: 560,
@@ -523,7 +523,7 @@ export default function AuditPage({
                 {trace.map((t) => (
                   <li key={t.id} style={{ marginBottom: 8, fontSize: 13 }}>
                     <code>{t.action}</code>
-                    <span style={{ color: '#6b7280' }}> · {fmtDate(t.occurredAt)}</span>
+                    <span style={{ color: '#9ca3af' }}> · {fmtDate(t.occurredAt)}</span>
                     <span style={{ marginLeft: 6 }}>
                       <SourceBadge source={t.source} />
                     </span>

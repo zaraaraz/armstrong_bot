@@ -9,7 +9,7 @@ export default function ModulesPage(): ReactNode {
   return (
     <div>
       <h2 style={{ marginTop: 0 }}>Modules</h2>
-      <p style={{ color: '#6b7280' }}>
+      <p style={{ color: '#9ca3af' }}>
         Per-module enable/disable and configuration lands with the feature
         modules (Phase 5). This page will list each module with a toggle and a
         settings panel driven by the module’s public config contract.

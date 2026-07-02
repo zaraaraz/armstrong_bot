@@ -7,8 +7,8 @@ import { Button, Card, Empty, Table, Td, fmtBytes, fmtDate } from '../../../../l
 
 const STATUS_COLOR: Record<string, string> = {
   pending: '#9ca3af',
-  'in-progress': '#2563eb',
-  completed: '#16a34a',
+  'in-progress': '#7983f5',
+  completed: '#23a55a',
   failed: '#dc2626',
 };
 
@@ -59,7 +59,7 @@ export default function BackupsPage({
         </Button>
       </div>
 
-      {error ? <p style={{ color: '#dc2626' }}>{error}</p> : null}
+      {error ? <p style={{ color: '#f87171' }}>{error}</p> : null}
 
       <Card>
         <Table columns={['Status', 'Size', 'Created', 'Completed', 'Error']}>
@@ -80,7 +80,7 @@ export default function BackupsPage({
         </Table>
       </Card>
 
-      <p style={{ fontSize: 13, color: '#6b7280', marginTop: 16 }}>
+      <p style={{ fontSize: 13, color: '#9ca3af', marginTop: 16 }}>
         Backups run asynchronously. The list updates live as jobs complete.
       </p>
     </div>

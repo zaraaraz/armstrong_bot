@@ -3,6 +3,7 @@
 import { use, useEffect, useState, type ReactNode } from 'react';
 import { usePathname } from 'next/navigation';
 import { api, type DashboardUser } from '../../../lib/api/client';
+import { palette } from '../../../lib/ui/ui';
 
 const NAV = [
   ['overview', 'Overview'],
@@ -14,7 +15,7 @@ const NAV = [
   ['backups', 'Backups'],
 ] as const;
 
-/** Guild shell: branded side nav + header (user + logout) + content. */
+/** Guild shell: branded dark side nav + header (user + logout) + content. */
 export default function GuildLayout({
   children,
   params,
@@ -40,8 +41,9 @@ export default function GuildLayout({
       <nav
         style={{
           width: 220,
-          background: '#111827',
-          color: '#e5e7eb',
+          background: '#0b0d13',
+          borderRight: `1px solid ${palette.faint}`,
+          color: palette.text,
           padding: '20px 12px',
           display: 'flex',
           flexDirection: 'column',
@@ -61,10 +63,10 @@ export default function GuildLayout({
                   style={{
                     display: 'block',
                     padding: '10px 12px',
-                    borderRadius: 6,
+                    borderRadius: 8,
                     marginBottom: 2,
-                    color: active ? 'white' : '#9ca3af',
-                    background: active ? '#5865F2' : 'transparent',
+                    color: active ? 'white' : palette.muted,
+                    background: active ? palette.accent : 'transparent',
                     textDecoration: 'none',
                     fontSize: 14,
                   }}
@@ -77,7 +79,12 @@ export default function GuildLayout({
         </ul>
         <a
           href="/guild-select"
-          style={{ color: '#9ca3af', fontSize: 12, padding: '0 12px', textDecoration: 'none' }}
+          style={{
+            color: palette.muted,
+            fontSize: 12,
+            padding: '0 12px',
+            textDecoration: 'none',
+          }}
         >
           ← Switch server
         </a>
@@ -87,8 +94,8 @@ export default function GuildLayout({
         <header
           style={{
             height: 56,
-            borderBottom: '1px solid #e5e7eb',
-            background: 'white',
+            borderBottom: `1px solid ${palette.faint}`,
+            background: 'rgba(255, 255, 255, 0.02)',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'flex-end',
@@ -97,7 +104,7 @@ export default function GuildLayout({
           }}
         >
           {user ? (
-            <span style={{ fontSize: 13, color: '#374151' }}>
+            <span style={{ fontSize: 13, color: palette.muted }}>
               {user.globalName ?? user.username}
               {user.isBotOwner ? ' · owner' : ''}
             </span>
@@ -105,11 +112,12 @@ export default function GuildLayout({
           <button
             onClick={logout}
             style={{
-              background: '#f3f4f6',
-              border: '1px solid #d1d5db',
-              borderRadius: 6,
+              background: 'transparent',
+              border: '1px solid rgba(255, 255, 255, 0.14)',
+              color: palette.muted,
+              borderRadius: 7,
               padding: '6px 12px',
-              fontSize: 13,
+              fontSize: 12.5,
               cursor: 'pointer',
             }}
           >

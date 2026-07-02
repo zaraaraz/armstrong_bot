@@ -9,10 +9,10 @@ import {
 import { Button, Card, Empty, Table, Td, fmtDate } from '../../../../lib/ui/ui';
 
 function keyStatus(k: DashboardApiKeyView): { label: string; color: string } {
-  if (k.revokedAt) return { label: 'revoked', color: '#dc2626' };
+  if (k.revokedAt) return { label: 'revoked', color: '#f87171' };
   if (k.expiresAt && new Date(k.expiresAt) < new Date())
     return { label: 'expired', color: '#d97706' };
-  return { label: 'active', color: '#16a34a' };
+  return { label: 'active', color: '#23a55a' };
 }
 
 export default function ApiKeysPage({
@@ -55,7 +55,7 @@ export default function ApiKeysPage({
         </Button>
       </div>
 
-      {error ? <p style={{ color: '#dc2626' }}>{error}</p> : null}
+      {error ? <p style={{ color: '#f87171' }}>{error}</p> : null}
 
       <Card>
         <Table columns={['Name', 'Prefix', 'Scopes', 'Status', 'Last used', 'Created', '']}>
@@ -143,7 +143,7 @@ function CreateKeyModal({
       <input style={INPUT} value={name} onChange={(e) => setName(e.target.value)} placeholder="My integration" />
       <label style={LABEL}>Scopes (comma-separated)</label>
       <input style={INPUT} value={scopes} onChange={(e) => setScopes(e.target.value)} placeholder="read.*, write.config" />
-      {err ? <p style={{ color: '#dc2626', fontSize: 13 }}>{err}</p> : null}
+      {err ? <p style={{ color: '#f87171', fontSize: 13 }}>{err}</p> : null}
       <div style={{ display: 'flex', gap: 8, marginTop: 16, justifyContent: 'flex-end' }}>
         <Button onClick={onClose}>Cancel</Button>
         <Button variant="primary" disabled={busy || name.trim().length < 3} onClick={submit}>
@@ -163,12 +163,12 @@ function ShowKeyModal({
 }): ReactNode {
   return (
     <Modal title="API key created" onClose={onClose}>
-      <p style={{ fontSize: 13, color: '#b45309' }}>
+      <p style={{ fontSize: 13, color: '#f0b232' }}>
         ⚠️ Copy this key now — it is shown only once and cannot be retrieved again.
       </p>
       <pre
         style={{
-          background: '#111827',
+          background: '#0b0d13',
           color: '#e5e7eb',
           padding: 12,
           borderRadius: 6,
@@ -211,7 +211,7 @@ function Modal({
     >
       <div
         onClick={(e) => e.stopPropagation()}
-        style={{ background: 'white', borderRadius: 10, padding: 24, width: 440, maxWidth: '90vw' }}
+        style={{ background: '#151823', border: '1px solid rgba(255,255,255,0.1)', color: '#e5e7eb', borderRadius: 12, padding: 24, width: 440, maxWidth: '90vw' }}
       >
         <h3 style={{ marginTop: 0 }}>{title}</h3>
         {children}
@@ -220,11 +220,11 @@ function Modal({
   );
 }
 
-const LABEL = { display: 'block', fontSize: 12, color: '#6b7280', margin: '10px 0 4px' } as const;
+const LABEL = { display: 'block', fontSize: 12, color: '#9ca3af', margin: '10px 0 4px' } as const;
 const INPUT = {
   width: '100%',
   padding: '8px 10px',
-  border: '1px solid #d1d5db',
+  border: '1px solid rgba(255,255,255,0.15)', background: 'rgba(255,255,255,0.05)', color: '#e5e7eb',
   borderRadius: 6,
   fontSize: 14,
   boxSizing: 'border-box' as const,

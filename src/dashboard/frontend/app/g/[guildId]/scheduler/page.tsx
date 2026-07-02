@@ -68,23 +68,23 @@ function HealthWidget(): ReactNode {
     <div style={{ display: 'flex', gap: 16, marginBottom: 24 }}>
       <div style={cell}>
         <div style={{ fontSize: 24, fontWeight: 600 }}>{health.queueDepth}</div>
-        <div style={{ fontSize: 12, color: '#666' }}>Queued</div>
+        <div style={{ fontSize: 12, color: '#9ca3af' }}>Queued</div>
       </div>
       <div style={cell}>
         <div style={{ fontSize: 24, fontWeight: 600, color: health.dlqSize > 0 ? '#dc2626' : undefined }}>
           {health.dlqSize}
         </div>
-        <div style={{ fontSize: 12, color: '#666' }}>DLQ</div>
+        <div style={{ fontSize: 12, color: '#9ca3af' }}>DLQ</div>
       </div>
       <div style={cell}>
         <div style={{ fontSize: 24, fontWeight: 600 }}>
           {health.workerUp ? '🟢' : '🔴'}
         </div>
-        <div style={{ fontSize: 12, color: '#666' }}>Worker</div>
+        <div style={{ fontSize: 12, color: '#9ca3af' }}>Worker</div>
       </div>
       <div style={cell}>
         <div style={{ fontSize: 13 }}>{fmt(health.lastReconcileAt)}</div>
-        <div style={{ fontSize: 12, color: '#666' }}>Last reconcile</div>
+        <div style={{ fontSize: 12, color: '#9ca3af' }}>Last reconcile</div>
       </div>
     </div>
   );
@@ -133,11 +133,11 @@ function JobDrawer({
         right: 0,
         width: 420,
         height: '100vh',
-        background: 'white',
-        borderLeft: '1px solid #ddd',
+        background: '#151823',
+        borderLeft: '1px solid rgba(255,255,255,0.1)',
         padding: 24,
         overflowY: 'auto',
-        boxShadow: '-4px 0 12px rgba(0,0,0,0.08)',
+        boxShadow: '-8px 0 24px rgba(0,0,0,0.5)',
       }}
     >
       <button onClick={onClose} style={{ float: 'right' }}>
@@ -178,7 +178,7 @@ function JobDrawer({
         </button>
         <button
           disabled={busy}
-          style={{ color: '#dc2626' }}
+          style={{ color: '#f87171' }}
           onClick={() => act(() => scheduler.cancel(job.id))}
         >
           Cancel
@@ -188,7 +188,7 @@ function JobDrawer({
       <h4>Recent runs</h4>
       <table style={{ width: '100%', fontSize: 12, borderCollapse: 'collapse' }}>
         <thead>
-          <tr style={{ textAlign: 'left', borderBottom: '1px solid #eee' }}>
+          <tr style={{ textAlign: 'left', borderBottom: '1px solid rgba(255,255,255,0.08)' }}>
             <th>#</th>
             <th>Status</th>
             <th>Duration</th>
@@ -197,7 +197,7 @@ function JobDrawer({
         </thead>
         <tbody>
           {runs.map((r) => (
-            <tr key={r.id} style={{ borderBottom: '1px solid #f3f3f3' }}>
+            <tr key={r.id} style={{ borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
               <td>{r.attempt}</td>
               <td>
                 <StatusBadge status={r.status} />
@@ -208,7 +208,7 @@ function JobDrawer({
           ))}
           {runs.length === 0 ? (
             <tr>
-              <td colSpan={4} style={{ color: '#999', padding: 8 }}>
+              <td colSpan={4} style={{ color: '#9ca3af', padding: 8 }}>
                 No runs yet
               </td>
             </tr>
@@ -280,11 +280,11 @@ export default function SchedulerPage({
         />
       </div>
 
-      {error ? <p style={{ color: '#dc2626' }}>{error}</p> : null}
+      {error ? <p style={{ color: '#f87171' }}>{error}</p> : null}
 
       <table style={{ width: '100%', borderCollapse: 'collapse' }}>
         <thead>
-          <tr style={{ textAlign: 'left', borderBottom: '2px solid #ddd' }}>
+          <tr style={{ textAlign: 'left', borderBottom: '1px solid rgba(255,255,255,0.12)' }}>
             <th>Kind</th>
             <th>Type</th>
             <th>Status</th>
@@ -297,7 +297,7 @@ export default function SchedulerPage({
             <tr
               key={job.id}
               onClick={() => setSelected(job)}
-              style={{ cursor: 'pointer', borderBottom: '1px solid #eee' }}
+              style={{ cursor: 'pointer', borderBottom: '1px solid rgba(255,255,255,0.08)' }}
             >
               <td>{job.kind}</td>
               <td>{job.type}</td>
@@ -310,7 +310,7 @@ export default function SchedulerPage({
           ))}
           {jobs.length === 0 ? (
             <tr>
-              <td colSpan={5} style={{ color: '#999', padding: 16 }}>
+              <td colSpan={5} style={{ color: '#9ca3af', padding: 16 }}>
                 No schedules
               </td>
             </tr>
@@ -330,7 +330,7 @@ export default function SchedulerPage({
         </button>
       </div>
 
-      <section style={{ marginTop: 32, fontSize: 13, color: '#555' }}>
+      <section style={{ marginTop: 32, fontSize: 13, color: '#9ca3af' }}>
         <h4>Configuration</h4>
         <p>
           Timezone and maintenance windows are stored under the guild settings

@@ -17,8 +17,9 @@ export default function RootLayout({
           margin: 0,
           fontFamily:
             'system-ui, -apple-system, "Segoe UI", Roboto, sans-serif',
-          background: '#f9fafb',
-          color: '#111827',
+          background: '#0f1117',
+          color: '#e5e7eb',
+          colorScheme: 'dark',
         }}
       >
         {children}
